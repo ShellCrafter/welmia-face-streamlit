@@ -41,40 +41,65 @@ except Exception:
 # CUSTOM CSS
 # ============================================================
 
-st.markdown(
+st.html(
     """
     <style>
 
-    /* --------------------------------------------------------
-       GLOBAL
-    -------------------------------------------------------- */
+    /* ========================================================
+       ROOT
+    ======================================================== */
+
+    :root {
+        --black: #0b0f14;
+        --dark: #111820;
+        --gray: #667085;
+        --light-gray: #98a2b3;
+        --border: rgba(15, 23, 42, 0.09);
+
+        --blue: #2563eb;
+        --blue-light: #60a5fa;
+        --green: #10b981;
+        --green-light: #34d399;
+
+        --glass: rgba(255, 255, 255, 0.72);
+    }
+
+
+    /* ========================================================
+       PAGE
+    ======================================================== */
 
     .stApp {
         background:
             radial-gradient(
-                circle at 10% 10%,
-                rgba(0, 0, 0, 0.035),
-                transparent 30%
+                circle at 8% 8%,
+                rgba(37, 99, 235, 0.075),
+                transparent 25%
             ),
             radial-gradient(
-                circle at 90% 90%,
-                rgba(0, 0, 0, 0.025),
+                circle at 92% 12%,
+                rgba(16, 185, 129, 0.065),
+                transparent 24%
+            ),
+            radial-gradient(
+                circle at 50% 100%,
+                rgba(37, 99, 235, 0.045),
                 transparent 30%
             ),
             #ffffff;
-        color: #111111;
     }
 
+
     .main .block-container {
-        max-width: 1200px;
-        padding-top: 3.5rem;
+        max-width: 1180px;
+        padding-top: 4.5rem;
         padding-bottom: 4rem;
     }
 
 
-    /* --------------------------------------------------------
-       HIDE DEFAULT STREAMLIT ELEMENTS
-    -------------------------------------------------------- */
+    /* ========================================================
+       STREAMLIT UI
+    ======================================================== */
 
     #MainMenu {
         visibility: hidden;
@@ -89,186 +114,640 @@ st.markdown(
     }
 
 
-    /* --------------------------------------------------------
+    /* ========================================================
        HERO
-    -------------------------------------------------------- */
+    ======================================================== */
 
-    .welmia-hero {
+    .hero {
+        position: relative;
         text-align: center;
-        padding: 30px 20px 25px 20px;
-        margin-bottom: 25px;
+        padding: 35px 20px 40px;
     }
 
-    .welmia-badge {
-        display: inline-block;
-        padding: 7px 13px;
-        border: 1px solid rgba(0, 0, 0, 0.10);
+
+    .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        padding: 8px 14px;
+
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.72);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
+
+        border: 1px solid rgba(37, 99, 235, 0.20);
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.055),
+                rgba(16, 185, 129, 0.055)
+            );
+
+        color: #344054;
+
         font-size: 12px;
-        font-weight: 600;
-        letter-spacing: 0.08em;
+        font-weight: 700;
+
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: #555555;
-        margin-bottom: 15px;
+
+        box-shadow:
+            0 0 25px rgba(37, 99, 235, 0.06);
     }
 
-    .welmia-title {
-        font-size: clamp(42px, 7vw, 72px);
-        line-height: 0.95;
-        font-weight: 800;
-        letter-spacing: -0.055em;
-        margin: 0;
-        color: #080808;
+
+    .hero-dot {
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #10b981;
+
+        box-shadow:
+            0 0 12px rgba(16, 185, 129, 0.65);
     }
 
-    .welmia-subtitle {
-        max-width: 650px;
-        margin: 18px auto 0 auto;
+
+    .hero-title {
+        margin: 22px 0 0;
+
+        font-size: clamp(48px, 8vw, 82px);
+
+        line-height: 0.92;
+
+        letter-spacing: -0.065em;
+
+        font-weight: 850;
+
+        color: #080b10;
+    }
+
+
+    .hero-title-gradient {
+        background:
+            linear-gradient(
+                100deg,
+                #0b0f14 10%,
+                #2563eb 48%,
+                #10b981 88%
+            );
+
+        -webkit-background-clip: text;
+        background-clip: text;
+
+        color: transparent;
+    }
+
+
+    .hero-subtitle {
+        max-width: 680px;
+
+        margin: 23px auto 0;
+
+        color: #667085;
+
         font-size: 17px;
-        line-height: 1.6;
-        color: #666666;
+
+        line-height: 1.7;
     }
 
 
-    /* --------------------------------------------------------
-       GLASS CARD
-    -------------------------------------------------------- */
+    .hero-meta {
+        display: flex;
+
+        justify-content: center;
+
+        gap: 10px;
+
+        flex-wrap: wrap;
+
+        margin-top: 23px;
+    }
+
+
+    .meta-chip {
+        padding: 7px 11px;
+
+        border-radius: 9px;
+
+        border: 1px solid rgba(15, 23, 42, 0.08);
+
+        background: rgba(255, 255, 255, 0.72);
+
+        color: #667085;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        box-shadow:
+            0 5px 20px rgba(15, 23, 42, 0.035);
+    }
+
+
+    /* ========================================================
+       SECTION CARD
+    ======================================================== */
 
     .glass-card {
-        background: rgba(255, 255, 255, 0.72);
-        border: 1px solid rgba(0, 0, 0, 0.09);
+        position: relative;
+
+        padding: 27px;
+
         border-radius: 24px;
-        padding: 24px;
+
+        border: 1px solid rgba(15, 23, 42, 0.085);
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(255, 255, 255, 0.88),
+                rgba(248, 250, 252, 0.72)
+            );
+
         box-shadow:
-            0 20px 60px rgba(0, 0, 0, 0.055),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
+            0 25px 70px rgba(15, 23, 42, 0.055),
+            inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+
+        overflow: hidden;
     }
 
 
-    /* --------------------------------------------------------
+    .glass-card::before {
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        left: 0;
+        right: 0;
+
+        height: 2px;
+
+        background:
+            linear-gradient(
+                90deg,
+                transparent,
+                #2563eb,
+                #10b981,
+                transparent
+            );
+
+        opacity: 0.85;
+    }
+
+
+    .section-label {
+        display: flex;
+
+        align-items: center;
+
+        gap: 10px;
+
+        margin-bottom: 20px;
+
+        font-size: 19px;
+
+        font-weight: 750;
+
+        color: #111827;
+    }
+
+
+    .section-icon {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        width: 34px;
+        height: 34px;
+
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.10),
+                rgba(16, 185, 129, 0.10)
+            );
+
+        border: 1px solid rgba(37, 99, 235, 0.12);
+
+        font-size: 16px;
+    }
+
+
+    /* ========================================================
        BUTTONS
-    -------------------------------------------------------- */
+    ======================================================== */
 
     .stButton > button {
+
+        min-height: 50px !important;
+
         border-radius: 14px !important;
-        border: 1px solid #111111 !important;
-        background: #111111 !important;
-        color: #ffffff !important;
-        font-weight: 700 !important;
-        min-height: 48px !important;
-        transition: all 0.2s ease !important;
+
+        border: 1px solid #111827 !important;
+
+        background:
+            linear-gradient(
+                100deg,
+                #0b0f14,
+                #111827
+            ) !important;
+
+        color: white !important;
+
+        font-size: 15px !important;
+
+        font-weight: 750 !important;
+
+        box-shadow:
+            0 8px 25px rgba(15, 23, 42, 0.12);
+
+        transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            border-color 0.18s ease !important;
     }
+
 
     .stButton > button:hover {
-        background: #2a2a2a !important;
-        border-color: #2a2a2a !important;
-        transform: translateY(-1px);
+
+        transform: translateY(-2px);
+
+        border-color: #2563eb !important;
+
+        box-shadow:
+            0 12px 30px rgba(37, 99, 235, 0.17),
+            0 0 0 1px rgba(16, 185, 129, 0.12) !important;
     }
+
+
+    .stButton > button:active {
+        transform: translateY(0);
+    }
+
 
     .stDownloadButton > button {
+
+        min-height: 42px !important;
+
         border-radius: 12px !important;
-        border: 1px solid rgba(0, 0, 0, 0.12) !important;
-        background: rgba(255, 255, 255, 0.85) !important;
-        color: #111111 !important;
-        font-weight: 600 !important;
+
+        border: 1px solid rgba(37, 99, 235, 0.17) !important;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.035),
+                rgba(16, 185, 129, 0.035)
+            ) !important;
+
+        color: #1d4ed8 !important;
+
+        font-weight: 700 !important;
+
+        transition:
+            all 0.18s ease !important;
     }
+
 
     .stDownloadButton > button:hover {
-        border-color: #111111 !important;
-        background: #ffffff !important;
+
+        border-color: #10b981 !important;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(37, 99, 235, 0.075),
+                rgba(16, 185, 129, 0.075)
+            ) !important;
+
+        color: #047857 !important;
     }
 
 
-    /* --------------------------------------------------------
-       INPUTS
-    -------------------------------------------------------- */
+    /* ========================================================
+       SLIDER
+    ======================================================== */
 
-    div[data-baseweb="select"] > div,
-    div[data-baseweb="input"] > div {
+    div[data-testid="stSlider"] {
+
+        padding-top: 4px;
+    }
+
+
+    div[data-testid="stSlider"] div[role="slider"] {
+
+        background: #2563eb !important;
+
+        border-color: #ffffff !important;
+
+        box-shadow:
+            0 0 0 2px rgba(37, 99, 235, 0.14),
+            0 0 15px rgba(37, 99, 235, 0.25);
+    }
+
+
+    /* ========================================================
+       SELECT
+    ======================================================== */
+
+    div[data-baseweb="select"] > div {
+
+        border-radius: 13px !important;
+
+        border-color: rgba(15, 23, 42, 0.10) !important;
+
+        background: rgba(255, 255, 255, 0.75) !important;
+
+        transition:
+            border-color 0.18s ease,
+            box-shadow 0.18s ease !important;
+    }
+
+
+    div[data-baseweb="select"] > div:focus-within {
+
+        border-color: rgba(37, 99, 235, 0.55) !important;
+
+        box-shadow:
+            0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    }
+
+
+    /* ========================================================
+       NUMBER INPUT
+    ======================================================== */
+
+    div[data-testid="stNumberInput"] input {
+
         border-radius: 12px !important;
     }
 
 
-    /* --------------------------------------------------------
-       IMAGE
-    -------------------------------------------------------- */
+    /* ========================================================
+       IMAGE CARDS
+    ======================================================== */
+
+    div[data-testid="stImage"] {
+
+        border-radius: 20px;
+
+        overflow: hidden;
+
+        background: #f8fafc;
+
+        box-shadow:
+            0 15px 40px rgba(15, 23, 42, 0.06);
+    }
+
 
     div[data-testid="stImage"] img {
-        border-radius: 18px;
-        border: 1px solid rgba(0, 0, 0, 0.08);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+
+        border-radius: 20px;
+
+        border: 1px solid rgba(15, 23, 42, 0.08);
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
     }
 
 
-    /* --------------------------------------------------------
-       INFO TEXT
-    -------------------------------------------------------- */
+    div[data-testid="stImage"] img:hover {
 
-    .small-info {
-        text-align: center;
-        color: #777777;
+        transform: translateY(-3px);
+
+        box-shadow:
+            0 18px 45px rgba(37, 99, 235, 0.10);
+    }
+
+
+    /* ========================================================
+       RESULT INFO
+    ======================================================== */
+
+    .result-bar {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        flex-wrap: wrap;
+
+        margin: 25px 0 18px;
+
+        padding: 14px 17px;
+
+        border-radius: 14px;
+
+        border: 1px solid rgba(16, 185, 129, 0.14);
+
+        background:
+            linear-gradient(
+                90deg,
+                rgba(37, 99, 235, 0.035),
+                rgba(16, 185, 129, 0.045)
+            );
+
+        color: #667085;
+
         font-size: 13px;
-        margin-top: 15px;
     }
 
-    .generation-info {
+
+    .result-status {
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 8px;
+
+        font-weight: 700;
+
+        color: #111827;
+    }
+
+
+    .status-dot {
+
+        width: 8px;
+        height: 8px;
+
+        border-radius: 50%;
+
+        background: #10b981;
+
+        box-shadow:
+            0 0 12px rgba(16, 185, 129, 0.65);
+    }
+
+
+    /* ========================================================
+       EMPTY STATE
+    ======================================================== */
+
+    .empty-card {
+
+        margin-top: 28px;
+
+        padding: 65px 25px;
+
         text-align: center;
-        color: #555555;
+
+        border-radius: 24px;
+
+        border: 1px dashed rgba(37, 99, 235, 0.20);
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(37, 99, 235, 0.025),
+                rgba(16, 185, 129, 0.025)
+            );
+    }
+
+
+    .empty-icon {
+
+        font-size: 48px;
+
+        margin-bottom: 12px;
+
+        filter:
+            drop-shadow(
+                0 8px 18px
+                rgba(37, 99, 235, 0.15)
+            );
+    }
+
+
+    .empty-title {
+
+        color: #111827;
+
+        font-size: 19px;
+
+        font-weight: 750;
+    }
+
+
+    .empty-text {
+
+        color: #667085;
+
         font-size: 14px;
-        margin: 12px 0 25px 0;
+
+        margin-top: 7px;
     }
 
 
-    /* --------------------------------------------------------
+    /* ========================================================
        FOOTER
-    -------------------------------------------------------- */
+    ======================================================== */
 
-    .welmia-footer {
+    .footer {
+
         text-align: center;
-        padding-top: 50px;
-        color: #888888;
-        font-size: 13px;
+
+        margin-top: 55px;
+
+        padding-top: 28px;
+
+        border-top:
+            1px solid rgba(15, 23, 42, 0.06);
+
+        color: #98a2b3;
+
+        font-size: 12px;
+
+        line-height: 1.8;
     }
 
-    .welmia-footer strong {
-        color: #333333;
+
+    .footer-brand {
+
+        color: #344054;
+
+        font-weight: 750;
     }
 
 
-    /* --------------------------------------------------------
+    .footer-link {
+
+        color: #2563eb;
+
+        text-decoration: none;
+    }
+
+
+    /* ========================================================
        MOBILE
-    -------------------------------------------------------- */
+    ======================================================== */
 
     @media (max-width: 700px) {
 
         .main .block-container {
-            padding-top: 2.5rem;
+
             padding-left: 1rem;
             padding-right: 1rem;
+
+            padding-top: 3.2rem;
         }
 
-        .welmia-title {
-            font-size: 46px;
+
+        .hero {
+
+            padding-left: 8px;
+            padding-right: 8px;
         }
 
-        .welmia-subtitle {
+
+        .hero-title {
+
+            font-size: 50px;
+        }
+
+
+        .hero-subtitle {
+
             font-size: 15px;
+
+            line-height: 1.6;
         }
+
 
         .glass-card {
-            padding: 18px;
+
+            padding: 19px;
+
             border-radius: 20px;
+        }
+
+
+        .result-bar {
+
+            align-items: flex-start;
+
+            flex-direction: column;
         }
     }
 
     </style>
-    """,
-    unsafe_allow_html=True,
+    """
 )
 
 
@@ -277,9 +756,11 @@ st.markdown(
 # ============================================================
 
 MODEL_REPO = "Welmia/welmia-face-1.0-3.6m-base"
+
 MODEL_FILENAME = "model.safetensors"
 
 LATENT_DIM = 100
+
 DEVICE = torch.device("cpu")
 
 
@@ -304,10 +785,11 @@ class Generator(torch.nn.Module):
                 bias=False,
             ),
 
-            torch.nn.BatchNorm2d(ngf * 8),
+            torch.nn.BatchNorm2d(
+                ngf * 8
+            ),
 
             torch.nn.ReLU(True),
-
 
             torch.nn.ConvTranspose2d(
                 ngf * 8,
@@ -318,10 +800,11 @@ class Generator(torch.nn.Module):
                 bias=False,
             ),
 
-            torch.nn.BatchNorm2d(ngf * 4),
+            torch.nn.BatchNorm2d(
+                ngf * 4
+            ),
 
             torch.nn.ReLU(True),
-
 
             torch.nn.ConvTranspose2d(
                 ngf * 4,
@@ -332,10 +815,11 @@ class Generator(torch.nn.Module):
                 bias=False,
             ),
 
-            torch.nn.BatchNorm2d(ngf * 2),
+            torch.nn.BatchNorm2d(
+                ngf * 2
+            ),
 
             torch.nn.ReLU(True),
-
 
             torch.nn.ConvTranspose2d(
                 ngf * 2,
@@ -346,10 +830,11 @@ class Generator(torch.nn.Module):
                 bias=False,
             ),
 
-            torch.nn.BatchNorm2d(ngf),
+            torch.nn.BatchNorm2d(
+                ngf
+            ),
 
             torch.nn.ReLU(True),
-
 
             torch.nn.ConvTranspose2d(
                 ngf,
@@ -360,10 +845,11 @@ class Generator(torch.nn.Module):
                 bias=False,
             ),
 
-            torch.nn.BatchNorm2d(ngf // 2),
+            torch.nn.BatchNorm2d(
+                ngf // 2
+            ),
 
             torch.nn.ReLU(True),
-
 
             torch.nn.ConvTranspose2d(
                 ngf // 2,
@@ -402,7 +888,9 @@ def load_model():
         device="cpu",
     )
 
-    model.load_state_dict(state_dict)
+    model.load_state_dict(
+        state_dict
+    )
 
     model = model.to(DEVICE)
 
@@ -452,12 +940,12 @@ def generate_faces(
         output = model(z)
 
         output = (
-            output.clamp(-1, 1)
-            + 1
+            output.clamp(-1, 1) + 1
         ) / 2
 
 
     images = []
+
 
     for image_tensor in output:
 
@@ -484,7 +972,7 @@ def generate_faces(
 
 
 # ============================================================
-# IMAGE TO PNG BYTES
+# IMAGE TO PNG
 # ============================================================
 
 def image_to_bytes(image):
@@ -513,14 +1001,20 @@ def create_zip(images):
         compression=zipfile.ZIP_DEFLATED,
     ) as zip_file:
 
-        for index, image in enumerate(images, start=1):
+        for index, image in enumerate(
+            images,
+            start=1,
+        ):
 
-            image_bytes = image_to_bytes(image)
+            image_bytes = image_to_bytes(
+                image
+            )
 
             zip_file.writestr(
                 f"welmia_face_{index}.png",
                 image_bytes,
             )
+
 
     zip_buffer.seek(0)
 
@@ -531,42 +1025,90 @@ def create_zip(images):
 # HERO
 # ============================================================
 
-st.markdown(
+st.html(
     """
-    <div class="welmia-hero">
+    <div class="hero">
 
-        <div class="welmia-badge">
+        <div class="hero-pill">
+
+            <span class="hero-dot"></span>
+
             WELMIA AI · SYNTHETIC FACES
+
         </div>
 
-        <h1 class="welmia-title">
-            Welmia Face
+
+        <h1 class="hero-title">
+
+            Welmia
+            <span class="hero-title-gradient">
+                Face
+            </span>
+
         </h1>
 
-        <p class="welmia-subtitle">
-            Generate unique synthetic human faces using
-            a tiny 3.6M parameter DCGAN.
+
+        <p class="hero-subtitle">
+
+            Generate unique synthetic human faces
+            using a tiny 3.6M parameter DCGAN.
             Fast, lightweight and completely synthetic.
+
         </p>
 
+
+        <div class="hero-meta">
+
+            <div class="meta-chip">
+                ⚡ CPU Optimized
+            </div>
+
+            <div class="meta-chip">
+                🧠 3.6M Parameters
+            </div>
+
+            <div class="meta-chip">
+                🖼️ 128 × 128
+            </div>
+
+            <div class="meta-chip">
+                🔒 Synthetic Only
+            </div>
+
+        </div>
+
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
 
 
 # ============================================================
-# SETTINGS CARD
+# GENERATION SETTINGS
 # ============================================================
 
-st.markdown(
-    '<div class="glass-card">',
-    unsafe_allow_html=True,
+st.html(
+    """
+    <div class="glass-card">
+
+        <div class="section-label">
+
+            <span class="section-icon">
+                ✨
+            </span>
+
+            Generation
+
+        </div>
+
+    </div>
+    """
 )
 
-st.markdown("### Generation")
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns(
+    [1, 1, 1],
+    gap="large",
+)
 
 
 with col1:
@@ -609,46 +1151,28 @@ with col3:
         seed = None
 
         st.markdown(
-            """
-            <div style="
-                padding-top: 8px;
-                color: #666;
-                font-size: 14px;
-            ">
-                🎲 A new random face set every time
-            </div>
-            """,
-            unsafe_allow_html=True,
+            "🎲 **Random mode**  \n"
+            "Every generation uses fresh noise."
         )
 
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.write("")
 
 
 generate_button = st.button(
-    "✨ Generate Faces",
+    "✨  Generate Faces",
     use_container_width=True,
 )
 
 
-st.markdown(
-    """
-    <div class="small-info">
-        Random mode creates new faces every generation.
-        Fixed seed mode reproduces the same results.
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    "</div>",
-    unsafe_allow_html=True,
+st.caption(
+    "Random mode creates new faces every time. "
+    "Fixed seed mode makes results reproducible."
 )
 
 
 # ============================================================
-# MODEL LOADING
+# LOAD MODEL
 # ============================================================
 
 model = load_model()
@@ -662,7 +1186,10 @@ if generate_button:
 
     start_time = time.perf_counter()
 
-    with st.spinner("Generating synthetic faces..."):
+
+    with st.spinner(
+        "Generating synthetic faces..."
+    ):
 
         images = generate_faces(
             model=model,
@@ -670,29 +1197,44 @@ if generate_button:
             seed=seed,
         )
 
-    elapsed = time.perf_counter() - start_time
+
+    elapsed = (
+        time.perf_counter()
+        - start_time
+    )
+
 
     st.session_state["images"] = images
-    st.session_state["generation_time"] = elapsed
-    st.session_state["generation_seed"] = seed
+
+    st.session_state[
+        "generation_time"
+    ] = elapsed
+
+    st.session_state[
+        "generation_seed"
+    ] = seed
 
 
 # ============================================================
-# DISPLAY RESULTS
+# RESULTS
 # ============================================================
 
 if "images" in st.session_state:
 
     images = st.session_state["images"]
 
-    generation_time = st.session_state.get(
-        "generation_time",
-        0,
+    generation_time = (
+        st.session_state.get(
+            "generation_time",
+            0,
+        )
     )
 
-    generation_seed = st.session_state.get(
-        "generation_seed",
-        None,
+    generation_seed = (
+        st.session_state.get(
+            "generation_seed",
+            None,
+        )
     )
 
 
@@ -702,26 +1244,43 @@ if "images" in st.session_state:
 
     else:
 
-        seed_text = f"Seed: {generation_seed}"
+        seed_text = (
+            f"Fixed seed: "
+            f"{generation_seed}"
+        )
 
 
-    st.markdown(
+    st.html(
         f"""
-        <div class="generation-info">
-            Generated <strong>{len(images)}</strong> synthetic faces
-            · {generation_time:.2f}s
-            · {seed_text}
+        <div class="result-bar">
+
+            <div class="result-status">
+
+                <span class="status-dot"></span>
+
+                Generation complete
+
+            </div>
+
+            <div>
+                {len(images)} faces
+                &nbsp;·&nbsp;
+                {generation_time:.2f}s
+                &nbsp;·&nbsp;
+                {seed_text}
+            </div>
+
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # GALLERY
-    # --------------------------------------------------------
+    # ========================================================
 
     columns_per_row = 4
+
 
     for row_start in range(
         0,
@@ -733,6 +1292,7 @@ if "images" in st.session_state:
             row_start:
             row_start + columns_per_row
         ]
+
 
         columns = st.columns(
             columns_per_row,
@@ -759,13 +1319,15 @@ if "images" in st.session_state:
                 )
 
 
-                image_bytes = image_to_bytes(
-                    image
+                image_bytes = (
+                    image_to_bytes(
+                        image
+                    )
                 )
 
 
                 st.download_button(
-                    label="↓ PNG",
+                    label="↓  PNG",
                     data=image_bytes,
                     file_name=(
                         f"welmia_face_"
@@ -780,16 +1342,20 @@ if "images" in st.session_state:
                 )
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # DOWNLOAD ALL
-    # --------------------------------------------------------
+    # ========================================================
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.write("")
 
-    zip_bytes = create_zip(images)
+
+    zip_bytes = create_zip(
+        images
+    )
+
 
     st.download_button(
-        label="📦 Download All Faces",
+        label="📦  Download All Faces",
         data=zip_bytes,
         file_name="welmia_faces.zip",
         mime="application/zip",
@@ -804,39 +1370,25 @@ if "images" in st.session_state:
 
 else:
 
-    st.markdown(
+    st.html(
         """
-        <div class="glass-card" style="
-            text-align: center;
-            margin-top: 30px;
-            padding: 55px 25px;
-        ">
+        <div class="empty-card">
 
-            <div style="
-                font-size: 52px;
-                margin-bottom: 12px;
-            ">
+            <div class="empty-icon">
                 🧬
             </div>
 
-            <h3 style="
-                margin: 0;
-                color: #111;
-            ">
+            <div class="empty-title">
                 Ready to generate
-            </h3>
+            </div>
 
-            <p style="
-                color: #777;
-                margin-top: 10px;
-            ">
+            <div class="empty-text">
                 Choose your settings and create
                 a new set of synthetic faces.
-            </p>
+            </div>
 
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
@@ -844,18 +1396,30 @@ else:
 # FOOTER
 # ============================================================
 
-st.markdown(
+st.html(
     """
-    <div class="welmia-footer">
+    <div class="footer">
 
-        <strong>Welmia Face 1.0</strong>
+        <span class="footer-brand">
+            Welmia Face 1.0
+        </span>
+
         · 3.6M parameter synthetic face generator
 
-        <br><br>
+        <br>
 
         Synthetic faces only · Not real individuals
 
+        <br>
+
+        <a
+            class="footer-link"
+            href="https://welmia.kesug.com"
+            target="_blank"
+        >
+            welmia.kesug.com
+        </a>
+
     </div>
-    """,
-    unsafe_allow_html=True,
+    """
 )
