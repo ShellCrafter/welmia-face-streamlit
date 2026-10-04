@@ -11,25 +11,31 @@ jobs:
     steps:
       - name: Ping app
         run: |
+          set +e
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             --max-time 180 \
-            --max-redirs 5 \
+            --max-redirs 3 \
             -L \
             -H "User-Agent: KeepAlive/1.0" \
             https://welmia-face.streamlit.app/)
           CURL_EXIT=$?
-          echo "HTTP Status: $HTTP_CODE"
-          echo "Curl exit: $CURL_EXIT"
+          set -e
 
-          if [ "$HTTP_CODE" = "200" ]; then
-            echo "✅ Awake"
-          elif [ "$HTTP_CODE" = "302" ] || [ "$HTTP_CODE" = "301" ]; then
-            echo "✅ Awake (redirect — normal for Streamlit)"
-          elif [ "$HTTP_CODE" = "503" ]; then
-            echo "⏳ Waking up"
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Curl exit code: $CURL_EXIT"
+
+          # Exit code 47 = too many redirects = server IS responding (app is awake)
+          # Exit code 0 with HTTP 200/30x = healthy
+          # Anything else = real problem
+          if [ "$CURL_EXIT" = "0" ] && [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Awake (200 OK)"
+          elif [ "$CURL_EXIT" = "0" ] && ([ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]); then
+            echo "✅ Awake (redirect, normal for Streamlit)"
           elif [ "$CURL_EXIT" = "47" ]; then
-            echo "✅ Awake (redirect loop during warm-up — app is responding)"
+            echo "✅ Awake (responding with redirects — app is up)"
+          elif [ "$HTTP_CODE" = "503" ]; then
+            echo "⏳ Waking up (cold start)"
           else
-            echo "❌ Unexpected: HTTP=$HTTP_CODE curl_exit=$CURL_EXIT"
+            echo "❌ Problem: HTTP=$HTTP_CODE curl_exit=$CURL_EXIT"
             exit 1
           fi
