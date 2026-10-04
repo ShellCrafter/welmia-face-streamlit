@@ -14,7 +14,6 @@ import time
 import zipfile
 
 import streamlit as st
-import streamlit.components.v1 as components
 import torch
 from PIL import Image
 from safetensors.torch import load_file
@@ -244,6 +243,68 @@ st.html(
 
 
     /* ========================================================
+       COLLAPSED TOP BAR
+       Shown instead of the hero once faces exist, so the
+       gallery lands inside the first viewport.
+    ======================================================== */
+
+    .topbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        margin: 2px 0 12px;
+        padding: 9px 14px;
+
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        background: var(--card);
+        box-shadow: var(--shadow);
+    }
+
+    .topbar-mark {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        flex-shrink: 0;
+
+        display: grid;
+        place-items: center;
+
+        background: linear-gradient(140deg, #4338ca, #7c73ff 60%, #22d3ee);
+        box-shadow: 0 2px 6px rgba(67, 56, 202, .25);
+
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .topbar-name {
+        font-size: 14.5px;
+        font-weight: 600;
+        letter-spacing: -.01em;
+        color: var(--ink);
+    }
+
+    .topbar-specs {
+        margin-left: auto;
+
+        font-size: 12.5px;
+        color: #6a7280;
+        font-family: var(--mono);
+    }
+
+    @media (max-width: 700px) {
+        .topbar-specs {
+            margin-left: 0;
+            width: 100%;
+            font-size: 11.5px;
+        }
+    }
+
+
+    /* ========================================================
        CARD CONTAINER
        (matches the .card treatment on projects.php)
     ======================================================== */
@@ -253,7 +314,7 @@ st.html(
         border: 1px solid var(--line);
         border-radius: var(--radius);
         box-shadow: var(--shadow);
-        padding: 6px 26px 22px;
+        padding: 6px 26px 18px;
     }
 
     .section-label {
@@ -675,8 +736,8 @@ st.html(
         gap: 10px;
         flex-wrap: wrap;
 
-        margin-top: 14px;
-        padding: 12px 15px;
+        margin-top: 10px;
+        padding: 11px 15px;
 
         border: 1px solid var(--good-line);
         border-radius: var(--radius-sm);
@@ -748,8 +809,8 @@ st.html(
         gap: 15px;
         flex-wrap: wrap;
 
-        margin: 8px 0 20px;
-        padding: 13px 18px;
+        margin: 4px 0 14px;
+        padding: 12px 18px;
 
         border: 1px solid var(--line);
         border-left: 3px solid var(--accent);
@@ -1292,49 +1353,79 @@ def create_zip(images):
 
 # ============================================================
 # HERO
+#
+# Full hero on first load (it sells the model and frames the page),
+# but collapses to a slim bar once faces exist. That reclaims ~250px
+# so the generated grid is visible in the very first viewport —
+# no scrolling, and no JavaScript involved.
 # ============================================================
 
 st.html(TOKENS)
 
 
-st.html(
-    """
-    <div class="hero">
-
-        <span class="hero-eyebrow">
-            <span class="hero-dot"></span>
-            Welmia Face 1.0
-        </span>
-
-        <h1 class="hero-title">
-            Synthetic faces from noise, in real time.
-        </h1>
-
-        <p class="hero-sub">
-            A 3.6M parameter DCGAN, trained from scratch, running on your CPU.
-            Every face it invents is synthetic — nobody real is behind any of them.
-        </p>
-
-    </div>
-    """
-)
+HAS_RESULTS = "images" in st.session_state
 
 
-st.html(
-    """
-    <div class="spec-row">
+if not HAS_RESULTS:
 
-        <span class="spec-chip"><b>3.6M</b> parameters</span>
+    st.html(
+        """
+        <div class="hero">
 
-        <span class="spec-chip"><b>128 × 128</b> output</span>
+            <span class="hero-eyebrow">
+                <span class="hero-dot"></span>
+                Welmia Face 1.0
+            </span>
 
-        <span class="spec-chip"><b>CPU</b> real time</span>
+            <h1 class="hero-title">
+                Synthetic faces from noise, in real time.
+            </h1>
 
-        <span class="spec-chip"><b>100%</b> synthetic</span>
+            <p class="hero-sub">
+                A 3.6M parameter DCGAN, trained from scratch, running on your CPU.
+                Every face it invents is synthetic — nobody real is behind any of them.
+            </p>
 
-    </div>
-    """
-)
+        </div>
+        """
+    )
+
+
+    st.html(
+        """
+        <div class="spec-row">
+
+            <span class="spec-chip"><b>3.6M</b> parameters</span>
+
+            <span class="spec-chip"><b>128 × 128</b> output</span>
+
+            <span class="spec-chip"><b>CPU</b> real time</span>
+
+            <span class="spec-chip"><b>100%</b> synthetic</span>
+
+        </div>
+        """
+    )
+
+
+else:
+
+    st.html(
+        """
+        <div class="topbar">
+
+            <span class="topbar-mark">W</span>
+
+            <span class="topbar-name">Welmia Face 1.0</span>
+
+            <span class="topbar-specs">
+                3.6M parameters &nbsp;·&nbsp; 128 × 128 &nbsp;·&nbsp; CPU
+                &nbsp;·&nbsp; 100% synthetic
+            </span>
+
+        </div>
+        """
+    )
 
 
 # ============================================================
@@ -1519,66 +1610,6 @@ if generate_button:
     st.session_state[
         "generation_seed"
     ] = seed
-
-    # tell the scroll helper (below) to take the user to the faces
-    st.session_state["scroll_to_gallery"] = True
-
-
-# ============================================================
-# AUTO-SCROLL TO RESULTS
-# Streamlit has no built-in scroll API, so a zero-height component
-# nudges the parent container instead. The retry loop matters: this
-# script runs before the gallery DOM exists in the same rerun.
-# If parent access is ever blocked, the "View faces" link in the
-# confirmation bar is the manual fallback.
-# ============================================================
-
-if st.session_state.pop("scroll_to_gallery", False):
-
-    components.html(
-        """
-        <script>
-        (function () {
-            function go() {
-                try {
-                    var doc = window.parent.document;
-                    var target = doc.getElementById("gallery");
-                    if (!target) return false;
-
-                    var scroller =
-                        doc.querySelector('[data-testid="stAppViewContainer"]') ||
-                        doc.scrollingElement ||
-                        doc.documentElement;
-
-                    var offset = scroller.getBoundingClientRect
-                                     ? scroller.getBoundingClientRect().top
-                                     : 0;
-
-                    var top = target.getBoundingClientRect().top
-                              - offset
-                              - 76;
-
-                    if (scroller.scrollTo) {
-                        scroller.scrollTo({ top: top, behavior: "smooth" });
-                    } else {
-                        scroller.scrollTop = top;
-                    }
-                    return true;
-                } catch (e) {
-                    return false;
-                }
-            }
-
-            var tries = 0;
-            var iv = setInterval(function () {
-                tries++;
-                if (go() || tries > 24) clearInterval(iv);
-            }, 120);
-        })();
-        </script>
-        """,
-        height=1,
-    )
 
 
 # ============================================================
