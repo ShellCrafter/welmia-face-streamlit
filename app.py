@@ -147,75 +147,73 @@ st.html(
 
 
     /* ========================================================
-       HERO  (compact — stays above the fold on a laptop)
+       APP BAR
+       Present in every state — the heading never disappears,
+       it just becomes an application header instead of a hero.
     ======================================================== */
 
-    .hero {
-        text-align: center;
-        padding: 6px 20px 20px;
-    }
-
-    .hero-eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-
-        font-size: 11.5px;
-        font-weight: 600;
-        letter-spacing: .05em;
-        text-transform: uppercase;
-
-        color: var(--accent);
-        background: var(--accent-soft);
-        border: 1px solid var(--accent-line);
-        border-radius: 999px;
-
-        padding: 5px 12px;
-        margin-bottom: 14px;
-    }
-
-    .hero-dot {
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: #22c55e;
-        box-shadow: 0 0 0 3px rgba(34, 197, 94, .18);
-    }
-
-    .hero-title {
-        margin: 0 0 8px;
-
-        font-size: clamp(25px, 3.2vw, 37px);
-        line-height: 1.12;
-        letter-spacing: -.035em;
-        font-weight: 700;
-
-        color: var(--ink);
-    }
-
-    .hero-sub {
-        margin: 0 auto;
-        max-width: 660px;
-
-        font-size: 14.5px;
-        line-height: 1.55;
-        color: var(--ink-2);
-    }
-
-
-    /* ========================================================
-       SPEC CHIPS
-       One line instead of a tall stat strip.
-    ======================================================== */
-
-    .spec-row {
+    .appbar {
         display: flex;
-        justify-content: center;
         align-items: center;
-        gap: 8px;
+        gap: 14px;
         flex-wrap: wrap;
 
-        margin: 14px 0 18px;
+        position: sticky;
+        top: 0;
+        z-index: 40;
+
+        margin: 0 0 20px;
+        padding: 12px 18px;
+
+        background: rgba(255, 255, 255, .90);
+        backdrop-filter: saturate(180%) blur(14px);
+        -webkit-backdrop-filter: saturate(180%) blur(14px);
+
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
+
+    .appbar-mark {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        flex-shrink: 0;
+
+        display: grid;
+        place-items: center;
+
+        background: linear-gradient(140deg, #4338ca, #7c73ff 58%, #22d3ee);
+        box-shadow: 0 3px 10px rgba(67, 56, 202, .28);
+
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -.02em;
+    }
+
+    .appbar-text { display: flex; flex-direction: column; min-width: 0; }
+
+    .appbar-title {
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -.025em;
+        color: var(--ink);
+        line-height: 1.25;
+    }
+
+    .appbar-sub {
+        font-size: 12.5px;
+        color: #6a7280;
+        line-height: 1.35;
+    }
+
+    .appbar-specs {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex-wrap: wrap;
     }
 
     .spec-chip {
@@ -223,86 +221,90 @@ st.html(
         align-items: baseline;
         gap: 5px;
 
-        padding: 5px 12px;
+        padding: 5px 11px;
         border-radius: 999px;
 
         border: 1px solid var(--line);
         background: var(--soft);
 
-        font-size: 12.5px;
+        font-size: 12px;
         color: #6a7280;
         white-space: nowrap;
     }
 
     .spec-chip b {
         font-weight: 600;
-        font-size: 13px;
+        font-size: 12.5px;
         color: var(--ink);
         letter-spacing: -.01em;
+    }
+
+    @media (max-width: 760px) {
+        .appbar { padding: 10px 14px; gap: 10px; }
+        .appbar-specs { margin-left: 0; width: 100%; }
+        .spec-chip { font-size: 11px; padding: 4px 9px; }
+        .spec-chip b { font-size: 11.5px; }
     }
 
 
     /* ========================================================
-       COLLAPSED TOP BAR
-       Shown instead of the hero once faces exist, so the
-       gallery lands inside the first viewport.
+       WORKSPACE
+       Controls sit beside the output instead of above it, so
+       the gallery is on screen from the first paint and the
+       settings stay reachable for repeat generations.
     ======================================================== */
 
-    .topbar {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
+    [data-testid="stApp"] div[data-testid="stHorizontalBlock"] { align-items: flex-start; }
 
-        margin: 2px 0 12px;
-        padding: 9px 14px;
-
-        border: 1px solid var(--line);
-        border-radius: var(--radius-sm);
-        background: var(--card);
-        box-shadow: var(--shadow);
+    /* the control column pins itself while the gallery scrolls */
+    [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stSlider"]) > [data-testid="stColumn"]:has([data-testid="stSlider"]) {
+        position: sticky;
+        top: 4.6rem;
+        align-self: flex-start;
     }
 
-    .topbar-mark {
-        width: 26px;
-        height: 26px;
-        border-radius: 8px;
-        flex-shrink: 0;
-
-        display: grid;
-        place-items: center;
-
-        background: linear-gradient(140deg, #4338ca, #7c73ff 60%, #22d3ee);
-        box-shadow: 0 2px 6px rgba(67, 56, 202, .25);
-
-        color: #fff;
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .topbar-name {
-        font-size: 14.5px;
-        font-weight: 600;
-        letter-spacing: -.01em;
-        color: var(--ink);
-    }
-
-    .topbar-specs {
-        margin-left: auto;
-
-        font-size: 12.5px;
-        color: #6a7280;
-        font-family: var(--mono);
-    }
-
-    @media (max-width: 700px) {
-        .topbar-specs {
-            margin-left: 0;
-            width: 100%;
-            font-size: 11.5px;
+    @media (max-width: 900px) {
+        [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stSlider"]) > [data-testid="stColumn"]:has([data-testid="stSlider"]) {
+            position: static;
         }
     }
 
+    .panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        margin: 2px 0 4px;
+
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: -.02em;
+        color: var(--ink);
+    }
+
+    .panel-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        flex-shrink: 0;
+
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        color: var(--accent);
+
+        font-size: 14px;
+    }
+
+    .panel-sub {
+        margin: 0 0 20px;
+        font-size: 13.5px;
+        line-height: 1.55;
+        color: #6a7280;
+    }
 
     /* ========================================================
        CARD CONTAINER
@@ -316,42 +318,6 @@ st.html(
         box-shadow: var(--shadow);
         padding: 6px 26px 18px;
     }
-
-    .section-label {
-        display: flex;
-        align-items: center;
-        gap: 11px;
-
-        margin: 12px 0 6px;
-
-        font-size: 19px;
-        letter-spacing: -.03em;
-        font-weight: 700;
-        color: var(--ink);
-    }
-
-    .section-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-
-        width: 32px;
-        height: 32px;
-        border-radius: var(--radius-sm);
-
-        background: var(--accent-soft);
-        border: 1px solid var(--accent-line);
-        color: var(--accent);
-
-        font-size: 15px;
-    }
-
-    .section-sub {
-        margin: 0 0 18px;
-        font-size: 13.5px;
-        color: var(--ink-2);
-    }
-
 
     /* ========================================================
        THEME VARIABLES
@@ -892,7 +858,7 @@ st.html(
 
     /* Never upscale the 128x128 output beyond a sensible size. */
     [data-testid="stApp"] div[data-testid="stImage"] img {
-        max-width: 176px;
+        max-width: 168px;
         width: 100% !important;
         margin: 0 auto;
         image-rendering: auto;
@@ -906,14 +872,11 @@ st.html(
         gap: 0.85rem;
     }
 
+    /* 132px lets four 128x128 outputs sit side by side inside the
+       output panel without any upscaling, and still reflow to
+       three or two in an even row rather than leaving a lone tile. */
     [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) > [data-testid="stColumn"] {
-        min-width: 148px;
-    }
-
-    @media (max-width: 1000px) {
-        [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) > [data-testid="stColumn"] {
-            min-width: 30%;
-        }
+        min-width: 132px;
     }
 
     @media (max-width: 620px) {
@@ -1025,11 +988,6 @@ st.html(
             padding-top: 1rem;
         }
 
-        .hero { padding: 4px 4px 16px; }
-        .hero-title { font-size: 25px; }
-        .hero-sub { font-size: 14px; }
-
-        .spec-row { margin: 12px 0 14px; gap: 6px; }
         .spec-chip { font-size: 11.5px; padding: 4px 10px; }
         .spec-chip b { font-size: 12px; }
 
@@ -1037,9 +995,9 @@ st.html(
             padding: 4px 16px 18px;
         }
 
-        .section-label { font-size: 17px; margin: 10px 0 6px; }
-        .section-icon { width: 29px; height: 29px; font-size: 14px; }
-        .section-sub { font-size: 13px; margin-bottom: 14px; }
+        .panel-title { font-size: 15px; }
+        .panel-icon { width: 26px; height: 26px; font-size: 13px; }
+        .panel-sub { font-size: 13px; margin-bottom: 16px; }
 
         .result-bar {
             align-items: flex-start;
@@ -1054,14 +1012,10 @@ st.html(
         .empty-card { padding: 46px 20px; }
     }
 
-    /* genuinely short windows: shed the marketing copy so the
-       Generate button is guaranteed visible without scrolling */
-    @media (min-width: 701px) and (max-height: 680px) {
-        .hero { padding: 2px 20px 14px; }
-        .hero-eyebrow { margin-bottom: 10px; }
-        .hero-sub { display: none; }
-        .spec-row { margin: 12px 0 14px; }
-        [data-testid="stVerticalBlockBorderWrapper"] { padding: 4px 26px 18px; }
+    /* genuinely short windows: tighten the control panel */
+    @media (min-width: 901px) and (max-height: 700px) {
+        [data-testid="stVerticalBlockBorderWrapper"] { padding: 4px 26px 16px; }
+        .panel-sub { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1352,12 +1306,11 @@ def create_zip(images):
 
 
 # ============================================================
-# HERO
-#
-# Full hero on first load (it sells the model and frames the page),
-# but collapses to a slim bar once faces exist. That reclaims ~250px
-# so the generated grid is visible in the very first viewport —
-# no scrolling, and no JavaScript involved.
+# APP SHELL
+# Controls live beside the output rather than above it. The gallery
+# is on screen from the first paint, the settings stay reachable
+# for repeat generations, and nothing collapses or disappears
+# between states.
 # ============================================================
 
 st.html(TOKENS)
@@ -1366,36 +1319,26 @@ st.html(TOKENS)
 HAS_RESULTS = "images" in st.session_state
 
 
-if not HAS_RESULTS:
+# ============================================================
+# APP BAR
+# Present in every state — the heading never disappears, it just
+# becomes an application header instead of a hero.
+# ============================================================
 
-    st.html(
-        """
-        <div class="hero">
+st.html(
+    """
+    <div class="appbar">
 
-            <span class="hero-eyebrow">
-                <span class="hero-dot"></span>
-                Welmia Face 1.0
+        <span class="appbar-mark">W</span>
+
+        <div class="appbar-text">
+            <span class="appbar-title">Welmia Face</span>
+            <span class="appbar-sub">
+                3.6M parameter DCGAN · trained from scratch
             </span>
-
-            <h1 class="hero-title">
-                Synthetic faces from noise, in real time.
-            </h1>
-
-            <p class="hero-sub">
-                A 3.6M parameter DCGAN, trained from scratch, running on your CPU.
-                Every face it invents is synthetic — nobody real is behind any of them.
-            </p>
-
         </div>
-        """
-    )
 
-
-    st.html(
-        """
-        <div class="spec-row">
-
-            <span class="spec-chip"><b>3.6M</b> parameters</span>
+        <div class="appbar-specs">
 
             <span class="spec-chip"><b>128 × 128</b> output</span>
 
@@ -1404,58 +1347,44 @@ if not HAS_RESULTS:
             <span class="spec-chip"><b>100%</b> synthetic</span>
 
         </div>
-        """
-    )
 
-
-else:
-
-    st.html(
-        """
-        <div class="topbar">
-
-            <span class="topbar-mark">W</span>
-
-            <span class="topbar-name">Welmia Face 1.0</span>
-
-            <span class="topbar-specs">
-                3.6M parameters &nbsp;·&nbsp; 128 × 128 &nbsp;·&nbsp; CPU
-                &nbsp;·&nbsp; 100% synthetic
-            </span>
-
-        </div>
-        """
-    )
+    </div>
+    """
+)
 
 
 # ============================================================
-# GENERATION SETTINGS
+# WORKSPACE — controls on the left, output on the right
 # ============================================================
 
-with st.container(border=True):
-
-    st.html(
-        """
-        <div class="section-label">
-            <span class="section-icon">✨</span>
-            Generation
-        </div>
-
-        <div class="section-sub">
-            Pick how many faces to make, and whether the result
-            should be random or reproducible.
-        </div>
-        """
-    )
+control_col, output_col = st.columns(
+    [1, 1.85],
+    gap="large",
+)
 
 
-    col1, col2, col3 = st.columns(
-        [1, 1, 1],
-        gap="large",
-    )
+# ------------------------------------------------------------
+# CONTROLS
+# ------------------------------------------------------------
 
+with control_col:
 
-    with col1:
+    with st.container(border=True):
+
+        st.html(
+            """
+            <div class="panel-title">
+                <span class="panel-icon">✨</span>
+                Generation
+            </div>
+
+            <p class="panel-sub">
+                Choose how many faces to make, and whether the
+                result should be random or reproducible.
+            </p>
+            """
+        )
+
 
         num_images = st.slider(
             "Number of faces",
@@ -1466,7 +1395,8 @@ with st.container(border=True):
         )
 
 
-    with col2:
+        st.write("")
+
 
         generation_mode = st.selectbox(
             "Generation mode",
@@ -1478,7 +1408,8 @@ with st.container(border=True):
         )
 
 
-    with col3:
+        st.write("")
+
 
         if generation_mode == "Fixed seed":
 
@@ -1498,74 +1429,77 @@ with st.container(border=True):
                 """
                 <div class="mode-note">
                     <span class="mode-dot"></span>
-                    <span><b>Random mode</b> · fresh noise every run</span>
+                    <span>
+                        <b>Random mode</b> · fresh noise every run
+                    </span>
                 </div>
                 """
             )
 
 
-    st.write("")
+        st.write("")
 
 
-    generate_button = st.button(
-        "✨  Generate Faces",
-        use_container_width=True,
-    )
-
-
-    st.caption(
-        "Random mode creates new faces every time. "
-        "Fixed seed mode makes results reproducible."
-    )
-
-
-    # ---- in-place confirmation ----------------------------------------
-    # Mirrors the result state right where the user is already looking,
-    # so nobody has to scroll down to find out whether it worked.
-    done_images = st.session_state.get("images")
-
-    if done_images:
-
-        done_time = st.session_state.get(
-            "generation_time",
-            0,
+        generate_button = st.button(
+            "✨  Generate Faces",
+            use_container_width=True,
         )
 
-        done_seed = st.session_state.get(
-            "generation_seed",
-            None,
+
+        st.caption(
+            "Random mode creates new faces every time. "
+            "Fixed seed mode makes results reproducible."
         )
 
-        done_seed_text = (
-            "Random seed"
-            if done_seed is None
-            else f"Fixed seed: {done_seed}"
-        )
 
-        st.html(
-            f"""
-            <div class="gen-done">
+        # ---- in-place confirmation ----------------------------
+        # Sits right under the button, so the outcome is visible
+        # in the same spot every run.
+        done_images = st.session_state.get("images")
 
-                <span class="gen-done-dot"></span>
+        if done_images:
 
-                <span>
-                    <b>{len(done_images)} faces ready</b>
-                    &nbsp;·&nbsp; {done_time:.2f}s
-                    &nbsp;·&nbsp; {done_seed_text}
-                </span>
+            done_time = st.session_state.get(
+                "generation_time",
+                0,
+            )
 
-                <a class="gen-done-link" href="#gallery">
-                    View faces
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="2.2" stroke-linecap="round"
-                         stroke-linejoin="round">
-                        <path d="M12 5v14M19 12l-7 7-7-7"/>
-                    </svg>
-                </a>
+            done_seed = st.session_state.get(
+                "generation_seed",
+                None,
+            )
 
-            </div>
-            """
-        )
+            done_seed_text = (
+                "Random seed"
+                if done_seed is None
+                else f"Fixed seed: {done_seed}"
+            )
+
+            st.html(
+                f"""
+                <div class="gen-done">
+
+                    <span class="gen-done-dot"></span>
+
+                    <span>
+                        <b>{len(done_images)} faces ready</b>
+                        &nbsp;·&nbsp; {done_time:.2f}s
+                        &nbsp;·&nbsp; {done_seed_text}
+                    </span>
+
+                    <a class="gen-done-link" href="#gallery">
+                        View
+                        <svg viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2.2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M12 5v14M19 12l-7 7-7-7"/>
+                        </svg>
+                    </a>
+
+                </div>
+                """
+            )
 
 
 # ============================================================
@@ -1612,188 +1546,194 @@ if generate_button:
     ] = seed
 
 
-# ============================================================
-# RESULTS
-# ============================================================
+# ------------------------------------------------------------
+# OUTPUT
+# ------------------------------------------------------------
 
-if "images" in st.session_state:
-
-    images = st.session_state["images"]
-
-    generation_time = (
-        st.session_state.get(
-            "generation_time",
-            0,
-        )
-    )
-
-    generation_seed = (
-        st.session_state.get(
-            "generation_seed",
-            None,
-        )
-    )
-
-
-    if generation_seed is None:
-
-        seed_text = "Random seed"
-
-    else:
-
-        seed_text = (
-            f"Fixed seed: "
-            f"{generation_seed}"
-        )
-
-
-    st.html(
-        f"""
-        <div class="result-bar">
-
-            <div class="result-status">
-
-                <span class="status-dot"></span>
-
-                Generation complete
-
-            </div>
-
-            <div class="result-meta">
-                {len(images)} faces
-                &nbsp;·&nbsp;
-                {generation_time:.2f}s
-                &nbsp;·&nbsp;
-                {seed_text}
-            </div>
-
-        </div>
-        """
-    )
-
-
-    st.html('<div id="gallery" class="anchor"></div>')
-
+with output_col:
 
     # ========================================================
-    # GALLERY
-    # 6 per row keeps each 128x128 output close to its native size,
-    # so faces stay crisp instead of being upscaled and smeared.
-    # The flex-wrap rule below reflows these to 2-up on phones.
+    # RESULTS
     # ========================================================
 
-    columns_per_row = 6
+    if "images" in st.session_state:
 
+        images = st.session_state["images"]
 
-    for row_start in range(
-        0,
-        len(images),
-        columns_per_row,
-    ):
+        generation_time = (
+            st.session_state.get(
+                "generation_time",
+                0,
+            )
+        )
 
-        row_images = images[
-            row_start:
-            row_start + columns_per_row
-        ]
-
-
-        columns = st.columns(
-            columns_per_row,
-            gap="medium",
+        generation_seed = (
+            st.session_state.get(
+                "generation_seed",
+                None,
+            )
         )
 
 
-        for local_index, image in enumerate(
-            row_images
-        ):
+        if generation_seed is None:
 
-            absolute_index = (
-                row_start
-                + local_index
-                + 1
+            seed_text = "Random seed"
+
+        else:
+
+            seed_text = (
+                f"Fixed seed: "
+                f"{generation_seed}"
             )
 
 
-            with columns[local_index]:
+        st.html(
+            f"""
+            <div class="result-bar">
 
-                st.image(
-                    image,
-                    use_container_width=True,
+                <div class="result-status">
+
+                    <span class="status-dot"></span>
+
+                    Generation complete
+
+                </div>
+
+                <div class="result-meta">
+                    {len(images)} faces
+                    &nbsp;·&nbsp;
+                    {generation_time:.2f}s
+                    &nbsp;·&nbsp;
+                    {seed_text}
+                </div>
+
+            </div>
+            """
+        )
+
+
+        st.html('<div id="gallery" class="anchor"></div>')
+
+
+        # ====================================================
+        # GALLERY
+        # 4-up keeps each 128x128 output close to its native
+        # size, so faces stay crisp instead of being upscaled.
+        # ====================================================
+
+        columns_per_row = 4
+
+
+        for row_start in range(
+            0,
+            len(images),
+            columns_per_row,
+        ):
+
+            row_images = images[
+                row_start:
+                row_start + columns_per_row
+            ]
+
+
+            columns = st.columns(
+                columns_per_row,
+                gap="medium",
+            )
+
+
+            for local_index, image in enumerate(
+                row_images
+            ):
+
+                absolute_index = (
+                    row_start
+                    + local_index
+                    + 1
                 )
 
 
-                image_bytes = (
-                    image_to_bytes(
-                        image
+                with columns[local_index]:
+
+                    st.image(
+                        image,
+                        use_container_width=True,
                     )
-                )
 
 
-                st.download_button(
-                    label="↓  PNG",
-                    data=image_bytes,
-                    file_name=(
-                        f"welmia_face_"
-                        f"{absolute_index}.png"
-                    ),
-                    mime="image/png",
-                    use_container_width=True,
-                    key=(
-                        f"download_"
-                        f"{absolute_index}"
-                    ),
-                )
+                    image_bytes = (
+                        image_to_bytes(
+                            image
+                        )
+                    )
+
+
+                    st.download_button(
+                        label="↓  PNG",
+                        data=image_bytes,
+                        file_name=(
+                            f"welmia_face_"
+                            f"{absolute_index}.png"
+                        ),
+                        mime="image/png",
+                        use_container_width=True,
+                        key=(
+                            f"download_"
+                            f"{absolute_index}"
+                        ),
+                    )
+
+
+        # ====================================================
+        # DOWNLOAD ALL
+        # ====================================================
+
+        st.write("")
+
+
+        zip_bytes = create_zip(
+            images
+        )
+
+
+        st.download_button(
+            label="📦  Download All Faces",
+            data=zip_bytes,
+            file_name="welmia_faces.zip",
+            mime="application/zip",
+            use_container_width=True,
+            key="download_all_faces",
+            type="primary",
+        )
 
 
     # ========================================================
-    # DOWNLOAD ALL
+    # EMPTY STATE
     # ========================================================
 
-    st.write("")
+    else:
 
+        st.html(
+            """
+            <div class="empty-card">
 
-    zip_bytes = create_zip(
-        images
-    )
+                <div class="empty-icon">
+                    🧬
+                </div>
 
+                <div class="empty-title">
+                    No faces yet
+                </div>
 
-    st.download_button(
-        label="📦  Download All Faces",
-        data=zip_bytes,
-        file_name="welmia_faces.zip",
-        mime="application/zip",
-        use_container_width=True,
-        key="download_all_faces",
-        type="primary",
-    )
+                <div class="empty-text">
+                    Set your options on the left and hit Generate.
+                    Every face is synthesised from noise — nobody
+                    real is behind any of them.
+                </div>
 
-
-# ============================================================
-# EMPTY STATE
-# ============================================================
-
-else:
-
-    st.html(
-        """
-        <div class="empty-card">
-
-            <div class="empty-icon">
-                🧬
             </div>
-
-            <div class="empty-title">
-                Ready to generate
-            </div>
-
-            <div class="empty-text">
-                Choose your settings and create
-                a new set of synthetic faces.
-            </div>
-
-        </div>
-        """
-    )
+            """
+        )
 
 
 # ============================================================
