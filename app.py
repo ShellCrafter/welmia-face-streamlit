@@ -514,20 +514,104 @@ st.html(
        RESULT BAR
     ======================================================== */
 
+    /* ========================================================
+       GENERATION CONFIRMATION
+       Sits directly under the Generate button, so the user sees
+       the outcome without scrolling. Sticky so it stays visible
+       while they browse the gallery.
+    ======================================================== */
+
+    .gen-done {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+
+        margin-top: 14px;
+        padding: 12px 15px;
+
+        border: 1px solid var(--good-line);
+        border-radius: var(--radius-sm);
+        background: var(--good-soft);
+
+        font-size: 13px;
+        color: var(--ink-2);
+    }
+
+    .gen-done b {
+        color: var(--ink);
+        font-weight: 600;
+    }
+
+    .gen-done-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--good);
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, .14);
+        flex-shrink: 0;
+    }
+
+    .gen-done-link {
+        margin-left: auto;
+        white-space: nowrap;
+
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+
+        padding: 5px 11px;
+        border-radius: 8px;
+
+        background: #fff;
+        border: 1px solid var(--good-line);
+        color: var(--good);
+
+        font-size: 12.5px;
+        font-weight: 600;
+        text-decoration: none;
+
+        transition:
+            transform .12s ease,
+            box-shadow .15s ease;
+    }
+
+    .gen-done-link:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+        color: var(--good);
+    }
+
+    .gen-done-link svg { width: 13px; height: 13px; }
+
+
+    /* ========================================================
+       RESULT BAR  (sticky — follows the user into the gallery)
+    ======================================================== */
+
     .result-bar {
+        position: sticky;
+        top: 3.6rem;
+        z-index: 30;
+
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 15px;
         flex-wrap: wrap;
 
-        margin: 4px 0 20px;
-        padding: 14px 18px;
+        margin: 8px 0 20px;
+        padding: 13px 18px;
 
         border: 1px solid var(--line);
         border-left: 3px solid var(--accent);
         border-radius: var(--radius-sm);
-        background: var(--soft);
+
+        background: rgba(255, 255, 255, .93);
+        backdrop-filter: saturate(180%) blur(12px);
+        -webkit-backdrop-filter: saturate(180%) blur(12px);
+
+        box-shadow: var(--shadow);
 
         font-size: 13px;
         color: var(--ink-2);
@@ -555,6 +639,11 @@ st.html(
         font-size: 12.5px;
         color: var(--ink-3);
     }
+
+    /* keep anchored targets clear of the pinned bar */
+    .anchor { scroll-margin-top: 7rem; height: 0; }
+
+    [data-testid="stAppViewContainer"] { scroll-behavior: smooth; }
 
 
     /* ========================================================
@@ -715,7 +804,11 @@ st.html(
             align-items: flex-start;
             flex-direction: column;
             gap: 9px;
+            top: 3.4rem;
         }
+
+        .gen-done { align-items: flex-start; }
+        .gen-done-link { margin-left: 0; }
 
         .empty-card { padding: 46px 20px; }
     }
@@ -1155,6 +1248,55 @@ with st.container(border=True):
     )
 
 
+    # ---- in-place confirmation ----------------------------------------
+    # Mirrors the result state right where the user is already looking,
+    # so nobody has to scroll down to find out whether it worked.
+    done_images = st.session_state.get("images")
+
+    if done_images:
+
+        done_time = st.session_state.get(
+            "generation_time",
+            0,
+        )
+
+        done_seed = st.session_state.get(
+            "generation_seed",
+            None,
+        )
+
+        done_seed_text = (
+            "Random seed"
+            if done_seed is None
+            else f"Fixed seed: {done_seed}"
+        )
+
+        st.html(
+            f"""
+            <div class="gen-done">
+
+                <span class="gen-done-dot"></span>
+
+                <span>
+                    <b>{len(done_images)} faces ready</b>
+                    &nbsp;·&nbsp; {done_time:.2f}s
+                    &nbsp;·&nbsp; {done_seed_text}
+                </span>
+
+                <a class="gen-done-link" href="#gallery">
+                    View faces
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.2" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M12 5v14M19 12l-7 7-7-7"/>
+                    </svg>
+                </a>
+
+            </div>
+            """
+        )
+
+
 # ============================================================
 # LOAD MODEL
 # ============================================================
@@ -1257,6 +1399,9 @@ if "images" in st.session_state:
         </div>
         """
     )
+
+
+    st.html('<div id="gallery" class="anchor"></div>')
 
 
     # ========================================================
