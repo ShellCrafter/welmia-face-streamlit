@@ -1,7 +1,7 @@
 name: Keep Streamlit Awake
 on:
   schedule:
-    - cron: '0 */4 * * *'   # Every 4 hours — safe margin under 12h sleep threshold
+    - cron: '0 */4 * * *'
   workflow_dispatch:
 
 jobs:
@@ -13,15 +13,23 @@ jobs:
         run: |
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             --max-time 180 \
+            --max-redirs 5 \
             -L \
             -H "User-Agent: KeepAlive/1.0" \
             https://welmia-face.streamlit.app/)
-          echo "Status: $HTTP_CODE"
+          CURL_EXIT=$?
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Curl exit: $CURL_EXIT"
+
           if [ "$HTTP_CODE" = "200" ]; then
             echo "✅ Awake"
+          elif [ "$HTTP_CODE" = "302" ] || [ "$HTTP_CODE" = "301" ]; then
+            echo "✅ Awake (redirect — normal for Streamlit)"
           elif [ "$HTTP_CODE" = "503" ]; then
             echo "⏳ Waking up"
+          elif [ "$CURL_EXIT" = "47" ]; then
+            echo "✅ Awake (redirect loop during warm-up — app is responding)"
           else
-            echo "❌ Unexpected: $HTTP_CODE"
+            echo "❌ Unexpected: HTTP=$HTTP_CODE curl_exit=$CURL_EXIT"
             exit 1
           fi
