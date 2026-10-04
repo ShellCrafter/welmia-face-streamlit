@@ -183,13 +183,15 @@ st.html(
         display: grid;
         place-items: center;
 
-        background: linear-gradient(140deg, #4338ca, #7c73ff 58%, #22d3ee);
-        box-shadow: 0 3px 10px rgba(67, 56, 202, .28);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        box-shadow: none;
 
-        color: #fff;
+        color: var(--accent);
         font-size: 15px;
-        font-weight: 700;
-        letter-spacing: -.02em;
+        font-weight: 600;
+        letter-spacing: .01em;
+        line-height: 1;
     }
 
     .appbar-text { display: flex; flex-direction: column; min-width: 0; }
@@ -214,6 +216,77 @@ st.html(
         align-items: center;
         gap: 7px;
         flex-wrap: wrap;
+    }
+
+    /* compact so the workspace still clears the fold */
+    .page-head {
+        text-align: center;
+        padding: 6px 20px 22px;
+    }
+
+    .page-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        border-radius: 999px;
+
+        padding: 5px 12px;
+        margin-bottom: 14px;
+    }
+
+    .page-eyebrow .dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, .18);
+    }
+
+    .page-title {
+        margin: 0 0 8px;
+
+        font-size: clamp(25px, 3.1vw, 36px);
+        line-height: 1.12;
+        letter-spacing: -.035em;
+        font-weight: 700;
+
+        color: var(--ink);
+    }
+
+    .page-sub {
+        margin: 0 auto;
+        max-width: 600px;
+
+        font-size: 14.5px;
+        line-height: 1.55;
+        color: #6a7280;
+    }
+
+    .count-chip {
+        margin-left: auto;
+
+        display: inline-flex;
+        align-items: center;
+
+        padding: 3px 10px;
+        border-radius: 999px;
+
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        color: var(--accent);
+
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 500;
     }
 
     .spec-chip {
@@ -244,6 +317,9 @@ st.html(
         .appbar-specs { margin-left: 0; width: 100%; }
         .spec-chip { font-size: 11px; padding: 4px 9px; }
         .spec-chip b { font-size: 11.5px; }
+        .page-head { padding: 2px 4px 16px; }
+        .page-title { font-size: 25px; }
+        .page-sub { font-size: 13.5px; }
     }
 
 
@@ -295,15 +371,19 @@ st.html(
         background: var(--accent-soft);
         border: 1px solid var(--accent-line);
         color: var(--accent);
-
-        font-size: 14px;
     }
+
+    .panel-glyph { width: 15px; height: 15px; }
 
     .panel-sub {
         margin: 0 0 20px;
         font-size: 13.5px;
         line-height: 1.55;
         color: #6a7280;
+    }
+
+    .output-title {
+        margin: 2px 0 14px;
     }
 
     /* ========================================================
@@ -1320,9 +1400,36 @@ HAS_RESULTS = "images" in st.session_state
 
 
 # ============================================================
+# PAGE HEADING
+# Always present. Sized so the workspace still clears the fold.
+# ============================================================
+
+st.html(
+    """
+    <div class="page-head">
+
+        <span class="page-eyebrow">
+            <span class="dot"></span>
+            Synthetic face generator
+        </span>
+
+        <h1 class="page-title">
+            Synthetic faces from noise, in real time.
+        </h1>
+
+        <p class="page-sub">
+            A 3.6M parameter DCGAN, trained completely from scratch and
+            running on your CPU. Every face it invents is synthetic —
+            nobody real is behind any of them.
+        </p>
+
+    </div>
+    """
+)
+
+
+# ============================================================
 # APP BAR
-# Present in every state — the heading never disappears, it just
-# becomes an application header instead of a hero.
 # ============================================================
 
 st.html(
@@ -1374,7 +1481,7 @@ with control_col:
         st.html(
             """
             <div class="panel-title">
-                <span class="panel-icon">✨</span>
+                <span class="panel-icon"><svg class="panel-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="2.6"/></svg></span>
                 Generation
             </div>
 
@@ -1551,6 +1658,38 @@ if generate_button:
 # ------------------------------------------------------------
 
 with output_col:
+
+    if "images" in st.session_state:
+
+        st.html(
+            f"""
+            <div class="panel-title output-title">
+
+                <span class="panel-icon"><svg class="panel-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></span>
+
+                Generated faces
+
+                <span class="count-chip">{len(st.session_state["images"])}</span>
+
+            </div>
+            """
+        )
+
+    else:
+
+        st.html(
+            """
+            <div class="panel-title output-title">
+
+                <span class="panel-icon"><svg class="panel-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg></span>
+
+                Output
+
+                <span class="count-chip">0</span>
+
+            </div>
+            """
+        )
 
     # ========================================================
     # RESULTS
