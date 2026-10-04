@@ -292,20 +292,44 @@ st.html(
 
 
     /* ========================================================
+       THEME VARIABLES
+       Streamlit drives most widget colours from CSS custom
+       properties. Overriding them here fixes widgets that injected
+       stylesheet rules were losing to — and works whether or not
+       a custom theme is set in .streamlit/config.toml.
+    ======================================================== */
+
+    [data-testid="stApp"],
+    [data-testid="stAppViewContainer"],
+    .stApp {
+        --primary-color: var(--accent);
+        --primary-color-fade: var(--accent-soft);
+        --background-color: #ffffff;
+        --secondary-background-color: var(--soft);
+        --text-color: var(--ink);
+        --border-color: var(--line);
+        --link-color: var(--accent);
+    }
+
+
+    /* ========================================================
        WIDGET LABELS
     ======================================================== */
 
-    [data-testid="stWidgetLabel"] p,
-    .stSelectbox label p,
-    .stSlider label p,
-    .stNumberInput label p {
+    [data-testid="stApp"] [data-testid="stWidgetLabel"] p,
+    [data-testid="stApp"] [data-testid="stWidgetLabel"] label,
+    [data-testid="stApp"] .stSelectbox label p,
+    [data-testid="stApp"] .stSlider label p,
+    [data-testid="stApp"] .stNumberInput label p {
         color: var(--ink-2) !important;
         font-size: 13.5px !important;
         font-weight: 600 !important;
         letter-spacing: -.005em;
     }
 
-    .stCaption, [data-testid="stCaptionContainer"] p {
+    [data-testid="stApp"] .stCaption,
+    [data-testid="stApp"] [data-testid="stCaptionContainer"],
+    [data-testid="stApp"] [data-testid="stCaptionContainer"] p {
         color: var(--ink-3) !important;
         font-size: 12.5px !important;
         line-height: 1.6;
@@ -316,11 +340,14 @@ st.html(
        BUTTONS
     ======================================================== */
 
-    .stButton > button {
+    [data-testid="stApp"] .stButton > button,
+    [data-testid="stApp"] .stButton > button:focus,
+    [data-testid="stApp"] .stButton > button:hover {
         min-height: 50px !important;
         border-radius: 11px !important;
 
         background: var(--ink) !important;
+        background-color: var(--ink) !important;
         border: 1px solid var(--ink) !important;
         color: #fff !important;
 
@@ -336,25 +363,29 @@ st.html(
             background .15s ease !important;
     }
 
-    .stButton > button:hover {
+    [data-testid="stApp"] .stButton > button:hover {
         transform: translateY(-1px);
         background: #1a1e27 !important;
+        background-color: #1a1e27 !important;
         border-color: #1a1e27 !important;
         box-shadow: var(--shadow-lg) !important;
     }
 
-    .stButton > button:active { transform: translateY(0); }
+    [data-testid="stApp"] .stButton > button:active { transform: translateY(0); }
 
-    .stButton > button:focus:not(:focus-visible) {
+    [data-testid="stApp"] .stButton > button:focus:not(:focus-visible) {
         box-shadow: var(--shadow) !important;
     }
 
     /* download buttons — the quieter secondary treatment */
-    .stDownloadButton > button {
+    [data-testid="stApp"] .stDownloadButton > button,
+    [data-testid="stApp"] .stDownloadButton > button:focus,
+    [data-testid="stApp"] .stDownloadButton > button:hover {
         min-height: 40px !important;
         border-radius: var(--radius-sm) !important;
 
         background: #fff !important;
+        background-color: #fff !important;
         border: 1px solid var(--line) !important;
         color: var(--ink) !important;
 
@@ -369,19 +400,20 @@ st.html(
             border-color .15s ease !important;
     }
 
-    .stDownloadButton > button:hover {
+    [data-testid="stApp"] .stDownloadButton > button:hover {
         transform: translateY(-1px);
         border-color: #d9dce4 !important;
         box-shadow: var(--shadow) !important;
     }
 
-    .stDownloadButton > button:active { transform: translateY(0); }
+    [data-testid="stApp"] .stDownloadButton > button:active { transform: translateY(0); }
 
     /* "Download All" gets the primary weight */
-    .stDownloadButton > button[kind="primary"],
-    [data-testid="stDownloadButton"] > button[kind="primary"],
-    [data-testid="stDownloadButton"] button[kind="primary"] {
+    [data-testid="stApp"] .stDownloadButton > button[kind="primary"],
+    [data-testid="stApp"] [data-testid="stDownloadButton"] > button[kind="primary"],
+    [data-testid="stApp"] [data-testid="stDownloadButton"] button[kind="primary"] {
         background: var(--ink) !important;
+        background-color: var(--ink) !important;
         border-color: var(--ink) !important;
         color: #fff !important;
         font-weight: 600 !important;
@@ -389,8 +421,9 @@ st.html(
         border-radius: 11px !important;
     }
 
-    .stDownloadButton > button[kind="primary"]:hover {
+    [data-testid="stApp"] .stDownloadButton > button[kind="primary"]:hover {
         background: #1a1e27 !important;
+        background-color: #1a1e27 !important;
         border-color: #1a1e27 !important;
         box-shadow: var(--shadow-lg) !important;
     }
@@ -400,25 +433,40 @@ st.html(
        SLIDER
     ======================================================== */
 
-    div[data-testid="stSlider"] div[role="slider"] {
+    [data-testid="stApp"] div[data-testid="stSlider"] div[data-baseweb="slider"] div[role="slider"] {
         background: var(--accent) !important;
+        background-color: var(--accent) !important;
         border: 2px solid #fff !important;
         box-shadow: 0 0 0 1px var(--accent-line),
                     0 4px 12px rgba(67, 56, 202, .28) !important;
     }
 
-    div[data-testid="stSlider"] div[role="slider"]:focus {
+    [data-testid="stApp"] div[data-testid="stSlider"] div[role="slider"] {
+        background: var(--accent) !important;
+        background-color: var(--accent) !important;
+        border: 2px solid #fff !important;
+    }
+
+    [data-testid="stApp"] div[data-testid="stSlider"] div[role="slider"]:focus {
         box-shadow: 0 0 0 4px var(--accent-soft) !important;
     }
 
-    div[data-testid="stSlider"] [data-baseweb="slider"] div {
+    [data-testid="stApp"] div[data-testid="stSlider"] div[data-baseweb="slider"] > div {
         background: var(--accent-line) !important;
+        background-color: var(--accent-line) !important;
     }
 
-    div[data-testid="stSlider"] [data-testid="stTickBarMin"],
-    div[data-testid="stSlider"] [data-testid="stTickBarMax"] {
+    [data-testid="stApp"] div[data-testid="stSlider"] [data-testid="stTickBarMin"],
+    [data-testid="stApp"] div[data-testid="stSlider"] [data-testid="stTickBarMax"] {
         color: var(--ink-3) !important;
         font-size: 11.5px !important;
+    }
+
+    /* the value bubble above the thumb */
+    [data-testid="stApp"] div[data-testid="stSlider"] [data-testid="stTooltipContent"],
+    [data-testid="stApp"] div[data-testid="stSlider"] div[data-baseweb="tooltip"] {
+        background: var(--ink) !important;
+        color: #fff !important;
     }
 
 
@@ -426,10 +474,14 @@ st.html(
        SELECT + NUMBER INPUT
     ======================================================== */
 
-    div[data-baseweb="select"] > div {
-        border-radius: var(--radius-sm) !important;
-        border-color: var(--line) !important;
+    [data-testid="stApp"] div[data-baseweb="select"] > div,
+    [data-testid="stApp"] div[data-baseweb="select"] > div:hover,
+    [data-testid="stApp"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div {
         background: #fff !important;
+        background-color: #fff !important;
+        border: 1px solid var(--line) !important;
+        border-radius: var(--radius-sm) !important;
+        color: var(--ink) !important;
         font-size: 14px;
 
         transition:
@@ -437,19 +489,46 @@ st.html(
             box-shadow .15s ease !important;
     }
 
-    div[data-baseweb="select"] > div:hover {
-        border-color: #d9dce4 !important;
+    [data-testid="stApp"] div[data-baseweb="select"] > div > div {
+        background: transparent !important;
+        background-color: transparent !important;
+        color: var(--ink) !important;
     }
 
-    div[data-baseweb="select"] > div:focus-within {
+    [data-testid="stApp"] div[data-baseweb="select"] svg {
+        color: var(--ink-3) !important;
+        fill: currentColor !important;
+    }
+
+    [data-testid="stApp"] div[data-baseweb="select"] > div:focus-within {
         border-color: var(--accent) !important;
         box-shadow: 0 0 0 3px var(--accent-soft) !important;
     }
 
-    div[data-testid="stNumberInput"] input {
-        border-radius: var(--radius-sm) !important;
-        border-color: var(--line) !important;
+    /* the dropdown list itself */
+    [data-testid="stApp"] ul[role="listbox"],
+    [data-testid="stApp"] div[data-baseweb="menu"] {
         background: #fff !important;
+        background-color: #fff !important;
+        border: 1px solid var(--line) !important;
+        border-radius: var(--radius-sm) !important;
+    }
+
+    [data-testid="stApp"] ul[role="listbox"] li:hover {
+        background: var(--soft) !important;
+    }
+
+    [data-testid="stApp"] ul[role="listbox"] li[aria-selected="true"] {
+        background: var(--accent-soft) !important;
+        color: var(--accent) !important;
+    }
+
+    [data-testid="stApp"] div[data-testid="stNumberInput"] input {
+        background: #fff !important;
+        background-color: #fff !important;
+        border-radius: var(--radius-sm) !important;
+        border: 1px solid var(--line) !important;
+        color: var(--ink) !important;
         font-size: 14px;
 
         transition:
@@ -457,20 +536,22 @@ st.html(
             box-shadow .15s ease !important;
     }
 
-    div[data-testid="stNumberInput"] input:focus {
+    [data-testid="stApp"] div[data-testid="stNumberInput"] input:focus {
         border-color: var(--accent) !important;
         box-shadow: 0 0 0 3px var(--accent-soft) !important;
     }
 
     /* the +/- steppers */
-    div[data-testid="stNumberInput"] button {
-        border-color: var(--line) !important;
+    [data-testid="stApp"] div[data-testid="stNumberInput"] button {
         background: var(--soft) !important;
+        background-color: var(--soft) !important;
+        border-color: var(--line) !important;
         color: var(--ink-2) !important;
     }
 
-    div[data-testid="stNumberInput"] button:hover {
+    [data-testid="stApp"] div[data-testid="stNumberInput"] button:hover {
         background: var(--line-2) !important;
+        background-color: var(--line-2) !important;
         color: var(--ink) !important;
     }
 
@@ -678,7 +759,39 @@ st.html(
 
     /* tighten the gap between a face and its download button */
     [data-testid="stVerticalBlock"]:has(> [data-testid="stImage"]) {
-        gap: 0.55rem;
+        gap: 0.5rem;
+    }
+
+    /* Never upscale the 128x128 output beyond a sensible size. */
+    [data-testid="stApp"] div[data-testid="stImage"] img {
+        max-width: 176px;
+        width: 100% !important;
+        margin: 0 auto;
+        image-rendering: auto;
+    }
+
+    /* Gallery rows only — the settings row has no stImage, so it keeps
+       its own 3-up layout. Wrapping + an even column ladder stops the
+       grid from ever leaving a lone stretched tile on its own row. */
+    [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) {
+        flex-wrap: wrap;
+        gap: 0.85rem;
+    }
+
+    [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) > [data-testid="stColumn"] {
+        min-width: 148px;
+    }
+
+    @media (max-width: 1000px) {
+        [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) > [data-testid="stColumn"] {
+            min-width: 30%;
+        }
+    }
+
+    @media (max-width: 620px) {
+        [data-testid="stApp"] div[data-testid="stHorizontalBlock"]:has([data-testid="stImage"]) > [data-testid="stColumn"] {
+            min-width: 46%;
+        }
     }
 
 
@@ -1406,9 +1519,12 @@ if "images" in st.session_state:
 
     # ========================================================
     # GALLERY
+    # 6 per row keeps each 128x128 output close to its native size,
+    # so faces stay crisp instead of being upscaled and smeared.
+    # The flex-wrap rule below reflows these to 2-up on phones.
     # ========================================================
 
-    columns_per_row = 4
+    columns_per_row = 6
 
 
     for row_start in range(
