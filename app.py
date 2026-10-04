@@ -108,9 +108,10 @@ st.html(
         -webkit-font-smoothing: antialiased;
     }
 
+    /* tight top padding: the generate controls must sit above the fold */
     .main .block-container {
         max-width: 1120px;
-        padding-top: 3.2rem;
+        padding-top: 1.1rem;
         padding-bottom: 4rem;
     }
 
@@ -146,22 +147,22 @@ st.html(
 
 
     /* ========================================================
-       HERO
+       HERO  (compact — stays above the fold on a laptop)
     ======================================================== */
 
     .hero {
         text-align: center;
-        padding: 28px 20px 40px;
+        padding: 6px 20px 20px;
     }
 
     .hero-eyebrow {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 7px;
 
-        font-size: 12.5px;
+        font-size: 11.5px;
         font-weight: 600;
-        letter-spacing: .04em;
+        letter-spacing: .05em;
         text-transform: uppercase;
 
         color: var(--accent);
@@ -169,23 +170,23 @@ st.html(
         border: 1px solid var(--accent-line);
         border-radius: 999px;
 
-        padding: 6px 14px;
-        margin-bottom: 22px;
+        padding: 5px 12px;
+        margin-bottom: 14px;
     }
 
     .hero-dot {
-        width: 6px;
-        height: 6px;
+        width: 5px;
+        height: 5px;
         border-radius: 50%;
         background: #22c55e;
         box-shadow: 0 0 0 3px rgba(34, 197, 94, .18);
     }
 
     .hero-title {
-        margin: 0 0 16px;
+        margin: 0 0 8px;
 
-        font-size: clamp(34px, 5.4vw, 52px);
-        line-height: 1.08;
+        font-size: clamp(25px, 3.2vw, 37px);
+        line-height: 1.12;
         letter-spacing: -.035em;
         font-weight: 700;
 
@@ -194,53 +195,50 @@ st.html(
 
     .hero-sub {
         margin: 0 auto;
-        max-width: 620px;
+        max-width: 660px;
 
-        font-size: 17px;
-        line-height: 1.65;
+        font-size: 14.5px;
+        line-height: 1.55;
         color: var(--ink-2);
     }
 
 
     /* ========================================================
-       STATS STRIP
+       SPEC CHIPS
+       One line instead of a tall stat strip.
     ======================================================== */
 
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1px;
+    .spec-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
 
-        background: var(--line);
+        margin: 14px 0 18px;
+    }
+
+    .spec-chip {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 5px;
+
+        padding: 5px 12px;
+        border-radius: 999px;
+
         border: 1px solid var(--line);
-        border-radius: var(--radius);
-        overflow: hidden;
+        background: var(--soft);
 
-        margin: 0 0 40px;
-    }
-
-    .stat {
-        background: #fff;
-        padding: 22px 18px;
-        text-align: center;
-    }
-
-    .stat b {
-        display: block;
-        font-size: 20px;
-        letter-spacing: -.03em;
-        font-weight: 700;
-        color: var(--ink);
-    }
-
-    .stat span {
-        display: block;
-        margin-top: 2px;
-
-        font-size: 11px;
+        font-size: 12.5px;
         color: var(--ink-3);
-        text-transform: uppercase;
-        letter-spacing: .05em;
+        white-space: nowrap;
+    }
+
+    .spec-chip b {
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--ink);
+        letter-spacing: -.01em;
     }
 
 
@@ -254,17 +252,17 @@ st.html(
         border: 1px solid var(--line);
         border-radius: var(--radius);
         box-shadow: var(--shadow);
-        padding: 8px 26px 26px;
+        padding: 6px 26px 22px;
     }
 
     .section-label {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 11px;
 
-        margin: 14px 0 22px;
+        margin: 12px 0 6px;
 
-        font-size: 22px;
+        font-size: 19px;
         letter-spacing: -.03em;
         font-weight: 700;
         color: var(--ink);
@@ -275,20 +273,20 @@ st.html(
         align-items: center;
         justify-content: center;
 
-        width: 34px;
-        height: 34px;
+        width: 32px;
+        height: 32px;
         border-radius: var(--radius-sm);
 
         background: var(--accent-soft);
         border: 1px solid var(--accent-line);
         color: var(--accent);
 
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .section-sub {
-        margin: -12px 0 22px;
-        font-size: 14.5px;
+        margin: 0 0 18px;
+        font-size: 13.5px;
         color: var(--ink-2);
     }
 
@@ -690,30 +688,28 @@ st.html(
        RESPONSIVE
     ======================================================== */
 
-    @media (max-width: 900px) {
-        .stats { grid-template-columns: repeat(2, 1fr); }
-    }
-
     @media (max-width: 700px) {
         .main .block-container {
             padding-left: 1rem;
             padding-right: 1rem;
-            padding-top: 2.2rem;
+            padding-top: 1rem;
         }
 
-        .hero { padding: 12px 4px 30px; }
-        .hero-title { font-size: 32px; }
-        .hero-sub { font-size: 15px; }
+        .hero { padding: 4px 4px 16px; }
+        .hero-title { font-size: 25px; }
+        .hero-sub { font-size: 14px; }
 
-        .stats { margin-bottom: 28px; }
-        .stat { padding: 18px 12px; }
-        .stat b { font-size: 17px; }
+        .spec-row { margin: 12px 0 14px; gap: 6px; }
+        .spec-chip { font-size: 11.5px; padding: 4px 10px; }
+        .spec-chip b { font-size: 12px; }
 
         [data-testid="stVerticalBlockBorderWrapper"] {
-            padding: 6px 18px 20px;
+            padding: 4px 16px 18px;
         }
 
-        .section-label { font-size: 19px; margin: 12px 0 18px; }
+        .section-label { font-size: 17px; margin: 10px 0 6px; }
+        .section-icon { width: 29px; height: 29px; font-size: 14px; }
+        .section-sub { font-size: 13px; margin-bottom: 14px; }
 
         .result-bar {
             align-items: flex-start;
@@ -722,6 +718,16 @@ st.html(
         }
 
         .empty-card { padding: 46px 20px; }
+    }
+
+    /* genuinely short windows: shed the marketing copy so the
+       Generate button is guaranteed visible without scrolling */
+    @media (min-width: 701px) and (max-height: 680px) {
+        .hero { padding: 2px 20px 14px; }
+        .hero-eyebrow { margin-bottom: 10px; }
+        .hero-sub { display: none; }
+        .spec-row { margin: 12px 0 14px; }
+        [data-testid="stVerticalBlockBorderWrapper"] { padding: 4px 26px 18px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1028,13 +1034,12 @@ st.html(
         </span>
 
         <h1 class="hero-title">
-            Synthetic faces from<br>noise, in real time.
+            Synthetic faces from noise, in real time.
         </h1>
 
         <p class="hero-sub">
-            A 3.6M parameter DCGAN, trained from scratch, running
-            on your CPU. Every face it invents is synthetic —
-            nobody real is behind any of them.
+            A 3.6M parameter DCGAN, trained from scratch, running on your CPU.
+            Every face it invents is synthetic — nobody real is behind any of them.
         </p>
 
     </div>
@@ -1044,27 +1049,15 @@ st.html(
 
 st.html(
     """
-    <div class="stats">
+    <div class="spec-row">
 
-        <div class="stat">
-            <b>3.6M</b>
-            <span>Parameters</span>
-        </div>
+        <span class="spec-chip"><b>3.6M</b> parameters</span>
 
-        <div class="stat">
-            <b>128 × 128</b>
-            <span>Output</span>
-        </div>
+        <span class="spec-chip"><b>128 × 128</b> output</span>
 
-        <div class="stat">
-            <b>CPU</b>
-            <span>Real time</span>
-        </div>
+        <span class="spec-chip"><b>CPU</b> real time</span>
 
-        <div class="stat">
-            <b>100%</b>
-            <span>Synthetic</span>
-        </div>
+        <span class="spec-chip"><b>100%</b> synthetic</span>
 
     </div>
     """
