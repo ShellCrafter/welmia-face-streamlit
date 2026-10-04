@@ -1,0 +1,32 @@
+# Streamlit theme — Welmia Face
+#
+# Place this at:  .streamlit/config.toml   (same folder as app.py)
+#
+# Why this file matters: Streamlit drives widget colours (selectbox,
+# slider, radio, focus rings) from this theme, and its generated
+# stylesheet is injected AFTER any CSS passed to st.html(). Several of
+# those rules are !important, so CSS alone cannot reliably win.
+# Setting the theme here fixes them at the source.
+#
+# Palette matches projects.php / about.php on welmia.kesug.com.
+
+[theme]
+primaryColor = "#4338ca"          # indigo accent
+backgroundColor = "#ffffff"       # white canvas
+secondaryBackgroundColor = "#fafbfc"  # soft panel fill
+textColor = "#0b0d12"             # near-black ink
+
+font = "sans serif"
+
+[theme.sidebar]
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#fafbfc"
+textColor = "#0b0d12"
+primaryColor = "#4338ca"
+
+[server]
+# keep the app quiet in production
+headless = true
+
+[browser]
+gatherUsageStats = false
