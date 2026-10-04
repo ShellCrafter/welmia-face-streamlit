@@ -1,3 +1,14 @@
+"""
+Welmia Face — Streamlit UI.
+
+Visual system aligned with welmia.kesug.com (projects.php / about.php):
+white canvas, indigo accent, Inter + JetBrains Mono, soft 1px borders,
+16px radii, quiet shadows.
+
+Model logic, widgets, session state and download behaviour are unchanged —
+this file is a presentation layer only.
+"""
+
 import io
 import time
 import zipfile
@@ -38,7 +49,44 @@ except Exception:
 
 
 # ============================================================
-# CUSTOM CSS
+# DESIGN TOKENS
+# Mirrors the :root block in projects.php
+# ============================================================
+
+TOKENS = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+    --ink:        #0b0d12;
+    --ink-2:      #4a5160;
+    --ink-3:      #8b93a3;
+    --line:       #e8eaef;
+    --line-2:     #f2f3f6;
+    --card:       #ffffff;
+    --soft:       #fafbfc;
+    --accent:     #4338ca;
+    --accent-2:   #6d67f5;
+    --accent-soft:#eef0ff;
+    --accent-line:#e0e3ff;
+    --good:       #0f766e;
+    --good-soft:  #ecfdf5;
+    --good-line:  #c9f2e4;
+    --warn:       #b45309;
+    --warn-soft:  #fffbeb;
+    --warn-line:  #fde68a;
+    --radius:     16px;
+    --radius-sm:  10px;
+    --shadow:     0 1px 2px rgba(11,13,18,.04), 0 8px 24px -12px rgba(11,13,18,.12);
+    --shadow-lg:  0 1px 2px rgba(11,13,18,.04), 0 24px 48px -24px rgba(11,13,18,.20);
+    --mono:       'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+</style>
+"""
+
+
+# ============================================================
+# UI STYLESHEET
 # ============================================================
 
 st.html(
@@ -46,72 +94,55 @@ st.html(
     <style>
 
     /* ========================================================
-       ROOT
+       BASE
     ======================================================== */
 
-    :root {
-        --black: #0b0f14;
-        --dark: #111820;
-        --gray: #667085;
-        --light-gray: #98a2b3;
-        --border: rgba(15, 23, 42, 0.09);
-
-        --blue: #2563eb;
-        --blue-light: #60a5fa;
-        --green: #10b981;
-        --green-light: #34d399;
-
-        --glass: rgba(255, 255, 255, 0.72);
+    html, body, [class*="css"], .stApp {
+        font-family: Inter, -apple-system, BlinkMacSystemFont,
+                     'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
-
-
-    /* ========================================================
-       PAGE
-    ======================================================== */
 
     .stApp {
-        background:
-            radial-gradient(
-                circle at 8% 8%,
-                rgba(37, 99, 235, 0.075),
-                transparent 25%
-            ),
-            radial-gradient(
-                circle at 92% 12%,
-                rgba(16, 185, 129, 0.065),
-                transparent 24%
-            ),
-            radial-gradient(
-                circle at 50% 100%,
-                rgba(37, 99, 235, 0.045),
-                transparent 30%
-            ),
-            #ffffff;
+        background: #ffffff;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
     }
 
-
     .main .block-container {
-        max-width: 1180px;
-        padding-top: 4.5rem;
+        max-width: 1120px;
+        padding-top: 3.2rem;
         padding-bottom: 4rem;
     }
 
+    ::selection {
+        background: var(--accent-soft);
+        color: var(--accent);
+    }
+
 
     /* ========================================================
-       STREAMLIT UI
+       STREAMLIT CHROME
     ======================================================== */
 
-    #MainMenu {
-        visibility: hidden;
+    #MainMenu, footer { visibility: hidden; }
+
+    header[data-testid="stHeader"] { background: transparent; }
+
+    header[data-testid="stHeader"] button[kind="header"] {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow);
+        transition: transform .15s ease, box-shadow .15s ease;
     }
 
-    footer {
-        visibility: hidden;
+    header[data-testid="stHeader"] button[kind="header"]:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-lg);
     }
 
-    header[data-testid="stHeader"] {
-        background: transparent;
-    }
+    /* Deploy / hamburger chrome colours */
+    .stApp [data-testid="stToolbar"] { right: 1.1rem; }
 
 
     /* ========================================================
@@ -119,227 +150,167 @@ st.html(
     ======================================================== */
 
     .hero {
-        position: relative;
         text-align: center;
-        padding: 35px 20px 40px;
+        padding: 28px 20px 40px;
     }
 
-
-    .hero-pill {
+    .hero-eyebrow {
         display: inline-flex;
         align-items: center;
         gap: 8px;
 
-        padding: 8px 14px;
-
-        border-radius: 999px;
-
-        border: 1px solid rgba(37, 99, 235, 0.20);
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(37, 99, 235, 0.055),
-                rgba(16, 185, 129, 0.055)
-            );
-
-        color: #344054;
-
-        font-size: 12px;
-        font-weight: 700;
-
-        letter-spacing: 0.12em;
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: .04em;
         text-transform: uppercase;
 
-        box-shadow:
-            0 0 25px rgba(37, 99, 235, 0.06);
-    }
+        color: var(--accent);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        border-radius: 999px;
 
+        padding: 6px 14px;
+        margin-bottom: 22px;
+    }
 
     .hero-dot {
-        width: 7px;
-        height: 7px;
-
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
-
-        background: #10b981;
-
-        box-shadow:
-            0 0 12px rgba(16, 185, 129, 0.65);
+        background: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, .18);
     }
-
 
     .hero-title {
-        margin: 22px 0 0;
+        margin: 0 0 16px;
 
-        font-size: clamp(48px, 8vw, 82px);
+        font-size: clamp(34px, 5.4vw, 52px);
+        line-height: 1.08;
+        letter-spacing: -.035em;
+        font-weight: 700;
 
-        line-height: 0.92;
-
-        letter-spacing: -0.065em;
-
-        font-weight: 850;
-
-        color: #080b10;
+        color: var(--ink);
     }
 
-
-    .hero-title-gradient {
-        background:
-            linear-gradient(
-                100deg,
-                #0b0f14 10%,
-                #2563eb 48%,
-                #10b981 88%
-            );
-
-        -webkit-background-clip: text;
-        background-clip: text;
-
-        color: transparent;
-    }
-
-
-    .hero-subtitle {
-        max-width: 680px;
-
-        margin: 23px auto 0;
-
-        color: #667085;
+    .hero-sub {
+        margin: 0 auto;
+        max-width: 620px;
 
         font-size: 17px;
-
-        line-height: 1.7;
-    }
-
-
-    .hero-meta {
-        display: flex;
-
-        justify-content: center;
-
-        gap: 10px;
-
-        flex-wrap: wrap;
-
-        margin-top: 23px;
-    }
-
-
-    .meta-chip {
-        padding: 7px 11px;
-
-        border-radius: 9px;
-
-        border: 1px solid rgba(15, 23, 42, 0.08);
-
-        background: rgba(255, 255, 255, 0.72);
-
-        color: #667085;
-
-        font-size: 12px;
-
-        font-weight: 600;
-
-        box-shadow:
-            0 5px 20px rgba(15, 23, 42, 0.035);
+        line-height: 1.65;
+        color: var(--ink-2);
     }
 
 
     /* ========================================================
-       SECTION CARD
+       STATS STRIP
     ======================================================== */
 
-    .glass-card {
-        position: relative;
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
 
-        padding: 27px;
-
-        border-radius: 24px;
-
-        border: 1px solid rgba(15, 23, 42, 0.085);
-
-        background:
-            linear-gradient(
-                145deg,
-                rgba(255, 255, 255, 0.88),
-                rgba(248, 250, 252, 0.72)
-            );
-
-        box-shadow:
-            0 25px 70px rgba(15, 23, 42, 0.055),
-            inset 0 1px 0 rgba(255, 255, 255, 0.95);
-
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-
+        background: var(--line);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
         overflow: hidden;
+
+        margin: 0 0 40px;
+    }
+
+    .stat {
+        background: #fff;
+        padding: 22px 18px;
+        text-align: center;
+    }
+
+    .stat b {
+        display: block;
+        font-size: 20px;
+        letter-spacing: -.03em;
+        font-weight: 700;
+        color: var(--ink);
+    }
+
+    .stat span {
+        display: block;
+        margin-top: 2px;
+
+        font-size: 11px;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        letter-spacing: .05em;
     }
 
 
-    .glass-card::before {
-        content: "";
+    /* ========================================================
+       CARD CONTAINER
+       (matches the .card treatment on projects.php)
+    ======================================================== */
 
-        position: absolute;
-
-        top: 0;
-        left: 0;
-        right: 0;
-
-        height: 2px;
-
-        background:
-            linear-gradient(
-                90deg,
-                transparent,
-                #2563eb,
-                #10b981,
-                transparent
-            );
-
-        opacity: 0.85;
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 8px 26px 26px;
     }
-
 
     .section-label {
         display: flex;
-
         align-items: center;
+        gap: 12px;
 
-        gap: 10px;
+        margin: 14px 0 22px;
 
-        margin-bottom: 20px;
-
-        font-size: 19px;
-
-        font-weight: 750;
-
-        color: #111827;
+        font-size: 22px;
+        letter-spacing: -.03em;
+        font-weight: 700;
+        color: var(--ink);
     }
-
 
     .section-icon {
         display: inline-flex;
-
         align-items: center;
-
         justify-content: center;
 
         width: 34px;
         height: 34px;
+        border-radius: var(--radius-sm);
 
-        border-radius: 10px;
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(37, 99, 235, 0.10),
-                rgba(16, 185, 129, 0.10)
-            );
-
-        border: 1px solid rgba(37, 99, 235, 0.12);
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
+        color: var(--accent);
 
         font-size: 16px;
+    }
+
+    .section-sub {
+        margin: -12px 0 22px;
+        font-size: 14.5px;
+        color: var(--ink-2);
+    }
+
+
+    /* ========================================================
+       WIDGET LABELS
+    ======================================================== */
+
+    [data-testid="stWidgetLabel"] p,
+    .stSelectbox label p,
+    .stSlider label p,
+    .stNumberInput label p {
+        color: var(--ink-2) !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
+        letter-spacing: -.005em;
+    }
+
+    .stCaption, [data-testid="stCaptionContainer"] p {
+        color: var(--ink-3) !important;
+        font-size: 12.5px !important;
+        line-height: 1.6;
     }
 
 
@@ -348,89 +319,82 @@ st.html(
     ======================================================== */
 
     .stButton > button {
-
         min-height: 50px !important;
+        border-radius: 11px !important;
 
-        border-radius: 14px !important;
-
-        border: 1px solid #111827 !important;
-
-        background:
-            linear-gradient(
-                100deg,
-                #0b0f14,
-                #111827
-            ) !important;
-
-        color: white !important;
+        background: var(--ink) !important;
+        border: 1px solid var(--ink) !important;
+        color: #fff !important;
 
         font-size: 15px !important;
+        font-weight: 600 !important;
+        letter-spacing: -.01em;
 
-        font-weight: 750 !important;
-
-        box-shadow:
-            0 8px 25px rgba(15, 23, 42, 0.12);
+        box-shadow: var(--shadow);
 
         transition:
-            transform 0.18s ease,
-            box-shadow 0.18s ease,
-            border-color 0.18s ease !important;
+            transform .12s ease,
+            box-shadow .15s ease,
+            background .15s ease !important;
     }
-
 
     .stButton > button:hover {
-
-        transform: translateY(-2px);
-
-        border-color: #2563eb !important;
-
-        box-shadow:
-            0 12px 30px rgba(37, 99, 235, 0.17),
-            0 0 0 1px rgba(16, 185, 129, 0.12) !important;
+        transform: translateY(-1px);
+        background: #1a1e27 !important;
+        border-color: #1a1e27 !important;
+        box-shadow: var(--shadow-lg) !important;
     }
 
+    .stButton > button:active { transform: translateY(0); }
 
-    .stButton > button:active {
-        transform: translateY(0);
+    .stButton > button:focus:not(:focus-visible) {
+        box-shadow: var(--shadow) !important;
     }
 
-
+    /* download buttons — the quieter secondary treatment */
     .stDownloadButton > button {
+        min-height: 40px !important;
+        border-radius: var(--radius-sm) !important;
 
-        min-height: 42px !important;
+        background: #fff !important;
+        border: 1px solid var(--line) !important;
+        color: var(--ink) !important;
 
-        border-radius: 12px !important;
+        font-size: 13.5px !important;
+        font-weight: 600 !important;
 
-        border: 1px solid rgba(37, 99, 235, 0.17) !important;
-
-        background:
-            linear-gradient(
-                135deg,
-                rgba(37, 99, 235, 0.035),
-                rgba(16, 185, 129, 0.035)
-            ) !important;
-
-        color: #1d4ed8 !important;
-
-        font-weight: 700 !important;
+        box-shadow: none;
 
         transition:
-            all 0.18s ease !important;
+            transform .12s ease,
+            box-shadow .15s ease,
+            border-color .15s ease !important;
     }
 
-
     .stDownloadButton > button:hover {
+        transform: translateY(-1px);
+        border-color: #d9dce4 !important;
+        box-shadow: var(--shadow) !important;
+    }
 
-        border-color: #10b981 !important;
+    .stDownloadButton > button:active { transform: translateY(0); }
 
-        background:
-            linear-gradient(
-                135deg,
-                rgba(37, 99, 235, 0.075),
-                rgba(16, 185, 129, 0.075)
-            ) !important;
+    /* "Download All" gets the primary weight */
+    .stDownloadButton > button[kind="primary"],
+    [data-testid="stDownloadButton"] > button[kind="primary"],
+    [data-testid="stDownloadButton"] button[kind="primary"] {
+        background: var(--ink) !important;
+        border-color: var(--ink) !important;
+        color: #fff !important;
+        font-weight: 600 !important;
+        min-height: 50px !important;
+        border-radius: 11px !important;
+    }
 
-        color: #047857 !important;
+    .stDownloadButton > button[kind="primary"]:hover {
+        background: #1a1e27 !important;
+        border-color: #1a1e27 !important;
+        box-shadow: var(--shadow-lg) !important;
     }
 
 
@@ -438,58 +402,160 @@ st.html(
        SLIDER
     ======================================================== */
 
-    div[data-testid="stSlider"] {
-
-        padding-top: 4px;
+    div[data-testid="stSlider"] div[role="slider"] {
+        background: var(--accent) !important;
+        border: 2px solid #fff !important;
+        box-shadow: 0 0 0 1px var(--accent-line),
+                    0 4px 12px rgba(67, 56, 202, .28) !important;
     }
 
+    div[data-testid="stSlider"] div[role="slider"]:focus {
+        box-shadow: 0 0 0 4px var(--accent-soft) !important;
+    }
 
-    div[data-testid="stSlider"] div[role="slider"] {
+    div[data-testid="stSlider"] [data-baseweb="slider"] div {
+        background: var(--accent-line) !important;
+    }
 
-        background: #2563eb !important;
-
-        border-color: #ffffff !important;
-
-        box-shadow:
-            0 0 0 2px rgba(37, 99, 235, 0.14),
-            0 0 15px rgba(37, 99, 235, 0.25);
+    div[data-testid="stSlider"] [data-testid="stTickBarMin"],
+    div[data-testid="stSlider"] [data-testid="stTickBarMax"] {
+        color: var(--ink-3) !important;
+        font-size: 11.5px !important;
     }
 
 
     /* ========================================================
-       SELECT
+       SELECT + NUMBER INPUT
     ======================================================== */
 
     div[data-baseweb="select"] > div {
-
-        border-radius: 13px !important;
-
-        border-color: rgba(15, 23, 42, 0.10) !important;
-
-        background: rgba(255, 255, 255, 0.75) !important;
+        border-radius: var(--radius-sm) !important;
+        border-color: var(--line) !important;
+        background: #fff !important;
+        font-size: 14px;
 
         transition:
-            border-color 0.18s ease,
-            box-shadow 0.18s ease !important;
+            border-color .15s ease,
+            box-shadow .15s ease !important;
     }
 
+    div[data-baseweb="select"] > div:hover {
+        border-color: #d9dce4 !important;
+    }
 
     div[data-baseweb="select"] > div:focus-within {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px var(--accent-soft) !important;
+    }
 
-        border-color: rgba(37, 99, 235, 0.55) !important;
+    div[data-testid="stNumberInput"] input {
+        border-radius: var(--radius-sm) !important;
+        border-color: var(--line) !important;
+        background: #fff !important;
+        font-size: 14px;
 
-        box-shadow:
-            0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+        transition:
+            border-color .15s ease,
+            box-shadow .15s ease !important;
+    }
+
+    div[data-testid="stNumberInput"] input:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px var(--accent-soft) !important;
+    }
+
+    /* the +/- steppers */
+    div[data-testid="stNumberInput"] button {
+        border-color: var(--line) !important;
+        background: var(--soft) !important;
+        color: var(--ink-2) !important;
+    }
+
+    div[data-testid="stNumberInput"] button:hover {
+        background: var(--line-2) !important;
+        color: var(--ink) !important;
     }
 
 
     /* ========================================================
-       NUMBER INPUT
+       MODE NOTE (random-mode placeholder column)
     ======================================================== */
 
-    div[data-testid="stNumberInput"] input {
+    .mode-note {
+        display: flex;
+        align-items: center;
+        gap: 10px;
 
-        border-radius: 12px !important;
+        height: 42px;
+        padding: 0 14px;
+
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        background: var(--soft);
+
+        color: var(--ink-2);
+        font-size: 13.5px;
+        font-weight: 500;
+    }
+
+    .mode-note .mode-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        flex-shrink: 0;
+    }
+
+    .mode-note b {
+        color: var(--ink);
+        font-weight: 600;
+    }
+
+
+    /* ========================================================
+       RESULT BAR
+    ======================================================== */
+
+    .result-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        flex-wrap: wrap;
+
+        margin: 4px 0 20px;
+        padding: 14px 18px;
+
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        border-radius: var(--radius-sm);
+        background: var(--soft);
+
+        font-size: 13px;
+        color: var(--ink-2);
+    }
+
+    .result-status {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+
+        font-weight: 600;
+        color: var(--ink);
+    }
+
+    .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--good);
+        box-shadow: 0 0 0 3px var(--good-soft);
+    }
+
+    .result-meta {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--ink-3);
     }
 
 
@@ -498,101 +564,34 @@ st.html(
     ======================================================== */
 
     div[data-testid="stImage"] {
-
-        border-radius: 20px;
-
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--soft);
+        padding: 6px;
         overflow: hidden;
 
-        background: #f8fafc;
-
-        box-shadow:
-            0 15px 40px rgba(15, 23, 42, 0.06);
+        transition:
+            transform .18s ease,
+            box-shadow .18s ease,
+            border-color .18s ease;
     }
 
+    div[data-testid="stImage"]:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        border-color: #dfe2ea;
+    }
 
     div[data-testid="stImage"] img {
-
-        border-radius: 20px;
-
-        border: 1px solid rgba(15, 23, 42, 0.08);
-
-        transition:
-            transform 0.25s ease,
-            box-shadow 0.25s ease;
+        border-radius: 9px;
+        display: block;
+        width: 100%;
+        image-rendering: auto;
     }
 
-
-    div[data-testid="stImage"] img:hover {
-
-        transform: translateY(-3px);
-
-        box-shadow:
-            0 18px 45px rgba(37, 99, 235, 0.10);
-    }
-
-
-    /* ========================================================
-       RESULT INFO
-    ======================================================== */
-
-    .result-bar {
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        gap: 15px;
-
-        flex-wrap: wrap;
-
-        margin: 25px 0 18px;
-
-        padding: 14px 17px;
-
-        border-radius: 14px;
-
-        border: 1px solid rgba(16, 185, 129, 0.14);
-
-        background:
-            linear-gradient(
-                90deg,
-                rgba(37, 99, 235, 0.035),
-                rgba(16, 185, 129, 0.045)
-            );
-
-        color: #667085;
-
-        font-size: 13px;
-    }
-
-
-    .result-status {
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 8px;
-
-        font-weight: 700;
-
-        color: #111827;
-    }
-
-
-    .status-dot {
-
-        width: 8px;
-        height: 8px;
-
-        border-radius: 50%;
-
-        background: #10b981;
-
-        box-shadow:
-            0 0 12px rgba(16, 185, 129, 0.65);
+    /* tighten the gap between a face and its download button */
+    [data-testid="stVerticalBlock"]:has(> [data-testid="stImage"]) {
+        gap: 0.55rem;
     }
 
 
@@ -601,57 +600,44 @@ st.html(
     ======================================================== */
 
     .empty-card {
-
-        margin-top: 28px;
-
-        padding: 65px 25px;
+        margin-top: 26px;
+        padding: 62px 26px;
 
         text-align: center;
-
-        border-radius: 24px;
-
-        border: 1px dashed rgba(37, 99, 235, 0.20);
-
-        background:
-            linear-gradient(
-                145deg,
-                rgba(37, 99, 235, 0.025),
-                rgba(16, 185, 129, 0.025)
-            );
+        border-radius: var(--radius);
+        border: 1px dashed var(--line);
+        background: var(--soft);
     }
-
 
     .empty-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 16px;
 
-        font-size: 48px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
 
-        margin-bottom: 12px;
+        background: var(--accent-soft);
+        border: 1px solid var(--accent-line);
 
-        filter:
-            drop-shadow(
-                0 8px 18px
-                rgba(37, 99, 235, 0.15)
-            );
+        font-size: 24px;
     }
-
 
     .empty-title {
-
-        color: #111827;
-
+        color: var(--ink);
         font-size: 19px;
-
-        font-weight: 750;
+        font-weight: 700;
+        letter-spacing: -.02em;
     }
 
-
     .empty-text {
+        margin: 7px auto 0;
+        max-width: 360px;
 
-        color: #667085;
-
-        font-size: 14px;
-
-        margin-top: 7px;
+        color: var(--ink-2);
+        font-size: 14.5px;
+        line-height: 1.6;
     }
 
 
@@ -660,89 +646,93 @@ st.html(
     ======================================================== */
 
     .footer {
-
         text-align: center;
+        margin-top: 56px;
+        padding-top: 26px;
 
-        margin-top: 55px;
+        border-top: 1px solid var(--line);
 
-        padding-top: 28px;
-
-        border-top:
-            1px solid rgba(15, 23, 42, 0.06);
-
-        color: #98a2b3;
-
-        font-size: 12px;
-
-        line-height: 1.8;
+        color: var(--ink-3);
+        font-size: 12.5px;
+        line-height: 1.9;
     }
-
 
     .footer-brand {
-
-        color: #344054;
-
-        font-weight: 750;
+        color: var(--ink-2);
+        font-weight: 600;
     }
 
-
     .footer-link {
-
-        color: #2563eb;
-
+        color: var(--accent);
         text-decoration: none;
+        font-weight: 500;
+        transition: color .15s ease;
+    }
+
+    .footer-link:hover { text-decoration: underline; }
+
+    .footer .lic {
+        display: inline-block;
+        margin-top: 2px;
+        padding: 3px 9px;
+        border-radius: 999px;
+
+        background: var(--warn-soft);
+        border: 1px solid var(--warn-line);
+        color: var(--warn);
+
+        font-size: 11px;
+        font-weight: 600;
     }
 
 
     /* ========================================================
-       MOBILE
+       RESPONSIVE
     ======================================================== */
 
+    @media (max-width: 900px) {
+        .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
     @media (max-width: 700px) {
-
         .main .block-container {
-
             padding-left: 1rem;
             padding-right: 1rem;
-
-            padding-top: 3.2rem;
+            padding-top: 2.2rem;
         }
 
+        .hero { padding: 12px 4px 30px; }
+        .hero-title { font-size: 32px; }
+        .hero-sub { font-size: 15px; }
 
-        .hero {
+        .stats { margin-bottom: 28px; }
+        .stat { padding: 18px 12px; }
+        .stat b { font-size: 17px; }
 
-            padding-left: 8px;
-            padding-right: 8px;
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            padding: 6px 18px 20px;
         }
 
-
-        .hero-title {
-
-            font-size: 50px;
-        }
-
-
-        .hero-subtitle {
-
-            font-size: 15px;
-
-            line-height: 1.6;
-        }
-
-
-        .glass-card {
-
-            padding: 19px;
-
-            border-radius: 20px;
-        }
-
+        .section-label { font-size: 19px; margin: 12px 0 18px; }
 
         .result-bar {
-
             align-items: flex-start;
-
             flex-direction: column;
+            gap: 9px;
+        }
+
+        .empty-card { padding: 46px 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation: none !important;
+            transition: none !important;
+        }
+        div[data-testid="stImage"]:hover,
+        .stButton > button:hover,
+        .stDownloadButton > button:hover {
+            transform: none;
         }
     }
 
@@ -1025,56 +1015,55 @@ def create_zip(images):
 # HERO
 # ============================================================
 
+st.html(TOKENS)
+
+
 st.html(
     """
     <div class="hero">
 
-        <div class="hero-pill">
-
+        <span class="hero-eyebrow">
             <span class="hero-dot"></span>
-
-            WELMIA AI · SYNTHETIC FACES
-
-        </div>
-
+            Welmia Face 1.0
+        </span>
 
         <h1 class="hero-title">
-
-            Welmia
-            <span class="hero-title-gradient">
-                Face
-            </span>
-
+            Synthetic faces from<br>noise, in real time.
         </h1>
 
-
-        <p class="hero-subtitle">
-
-            Generate unique synthetic human faces
-            using a tiny 3.6M parameter DCGAN.
-            Fast, lightweight and completely synthetic.
-
+        <p class="hero-sub">
+            A 3.6M parameter DCGAN, trained from scratch, running
+            on your CPU. Every face it invents is synthetic —
+            nobody real is behind any of them.
         </p>
 
+    </div>
+    """
+)
 
-        <div class="hero-meta">
 
-            <div class="meta-chip">
-                ⚡ CPU Optimized
-            </div>
+st.html(
+    """
+    <div class="stats">
 
-            <div class="meta-chip">
-                🧠 3.6M Parameters
-            </div>
+        <div class="stat">
+            <b>3.6M</b>
+            <span>Parameters</span>
+        </div>
 
-            <div class="meta-chip">
-                🖼️ 128 × 128
-            </div>
+        <div class="stat">
+            <b>128 × 128</b>
+            <span>Output</span>
+        </div>
 
-            <div class="meta-chip">
-                🔒 Synthetic Only
-            </div>
+        <div class="stat">
+            <b>CPU</b>
+            <span>Real time</span>
+        </div>
 
+        <div class="stat">
+            <b>100%</b>
+            <span>Synthetic</span>
         </div>
 
     </div>
@@ -1086,89 +1075,91 @@ st.html(
 # GENERATION SETTINGS
 # ============================================================
 
-st.html(
-    """
-    <div class="glass-card">
+with st.container(border=True):
 
+    st.html(
+        """
         <div class="section-label">
-
-            <span class="section-icon">
-                ✨
-            </span>
-
+            <span class="section-icon">✨</span>
             Generation
-
         </div>
 
-    </div>
-    """
-)
-
-
-col1, col2, col3 = st.columns(
-    [1, 1, 1],
-    gap="large",
-)
-
-
-with col1:
-
-    num_images = st.slider(
-        "Number of faces",
-        min_value=1,
-        max_value=50,
-        value=8,
-        step=1,
+        <div class="section-sub">
+            Pick how many faces to make, and whether the result
+            should be random or reproducible.
+        </div>
+        """
     )
 
 
-with col2:
-
-    generation_mode = st.selectbox(
-        "Generation mode",
-        [
-            "Random",
-            "Fixed seed",
-        ],
-        index=0,
+    col1, col2, col3 = st.columns(
+        [1, 1, 1],
+        gap="large",
     )
 
 
-with col3:
+    with col1:
 
-    if generation_mode == "Fixed seed":
-
-        seed = st.number_input(
-            "Seed",
-            min_value=0,
-            max_value=999999999,
-            value=42,
+        num_images = st.slider(
+            "Number of faces",
+            min_value=1,
+            max_value=50,
+            value=8,
             step=1,
         )
 
-    else:
 
-        seed = None
+    with col2:
 
-        st.markdown(
-            "🎲 **Random mode**  \n"
-            "Every generation uses fresh noise."
+        generation_mode = st.selectbox(
+            "Generation mode",
+            [
+                "Random",
+                "Fixed seed",
+            ],
+            index=0,
         )
 
 
-st.write("")
+    with col3:
+
+        if generation_mode == "Fixed seed":
+
+            seed = st.number_input(
+                "Seed",
+                min_value=0,
+                max_value=999999999,
+                value=42,
+                step=1,
+            )
+
+        else:
+
+            seed = None
+
+            st.html(
+                """
+                <div class="mode-note">
+                    <span class="mode-dot"></span>
+                    <span><b>Random mode</b> · fresh noise every run</span>
+                </div>
+                """
+            )
 
 
-generate_button = st.button(
-    "✨  Generate Faces",
-    use_container_width=True,
-)
+    st.write("")
 
 
-st.caption(
-    "Random mode creates new faces every time. "
-    "Fixed seed mode makes results reproducible."
-)
+    generate_button = st.button(
+        "✨  Generate Faces",
+        use_container_width=True,
+    )
+
+
+    st.caption(
+        "Random mode creates new faces every time. "
+        "Fixed seed mode makes results reproducible."
+    )
 
 
 # ============================================================
@@ -1262,7 +1253,7 @@ if "images" in st.session_state:
 
             </div>
 
-            <div>
+            <div class="result-meta">
                 {len(images)} faces
                 &nbsp;·&nbsp;
                 {generation_time:.2f}s
@@ -1361,6 +1352,7 @@ if "images" in st.session_state:
         mime="application/zip",
         use_container_width=True,
         key="download_all_faces",
+        type="primary",
     )
 
 
@@ -1409,6 +1401,10 @@ st.html(
         <br>
 
         Synthetic faces only · Not real individuals
+
+        <br>
+
+        <span class="lic">CC-BY-NC-4.0 · non-commercial</span>
 
         <br>
 
