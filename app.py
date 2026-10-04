@@ -14,6 +14,7 @@ import time
 import zipfile
 
 import streamlit as st
+import streamlit.components.v1 as components
 import torch
 from PIL import Image
 from safetensors.torch import load_file
@@ -230,7 +231,7 @@ st.html(
         background: var(--soft);
 
         font-size: 12.5px;
-        color: var(--ink-3);
+        color: #6a7280;
         white-space: nowrap;
     }
 
@@ -309,6 +310,69 @@ st.html(
         --text-color: var(--ink);
         --border-color: var(--line);
         --link-color: var(--accent);
+
+        /* the names older/newer baseweb builds fall back to */
+        --accent-primary-color: var(--accent);
+        --input-background-color: #ffffff;
+        --border-radius: 10px;
+    }
+
+    /* ========================================================
+       LAST-RESORT OVERRIDES
+       Streamlit builds baseweb controls with emotion classes whose
+       rules are also !important, and which are injected *after*
+       anything passed to st.html(). The selectors below deliberately
+       use plain descendant combinators (not >) so they still match
+       whether the control nests one level deep or several.
+
+       This is the safety net for when .streamlit/config.toml has
+       not been picked up. The config.toml theme is the real fix.
+    ======================================================== */
+
+    [data-testid="stApp"] [data-baseweb="select"] div,
+    [data-testid="stApp"] [data-baseweb="select"] > div {
+        background-color: #fff !important;
+        background-image: none !important;
+        color: var(--ink) !important;
+    }
+
+    [data-testid="stApp"] [data-baseweb="select"] > div {
+        border: 1px solid var(--line) !important;
+        border-radius: var(--radius-sm) !important;
+        box-shadow: none !important;
+    }
+
+    [data-testid="stApp"] [data-baseweb="select"] svg {
+        color: var(--ink-3) !important;
+        fill: currentColor !important;
+        stroke: currentColor !important;
+    }
+
+    [data-testid="stApp"] [data-baseweb="slider"] [role="slider"],
+    [data-testid="stApp"] [data-baseweb="slider"] [role="slider"] div,
+    [data-testid="stApp"] [role="slider"] {
+        background: var(--accent) !important;
+        background-color: var(--accent) !important;
+        background-image: none !important;
+        border-color: #ffffff !important;
+        box-shadow: 0 0 0 1px var(--accent-line),
+                    0 4px 12px rgba(67, 56, 202, .28) !important;
+    }
+
+    /* the unfilled rail, plus baseweb's inner filled div */
+    [data-testid="stApp"] [data-baseweb="slider"] > div,
+    [data-testid="stApp"] [data-baseweb="slider"] [data-baseweb="track"],
+    [data-testid="stApp"] [data-baseweb="slider"] div[class*="Track"],
+    [data-testid="stApp"] [data-baseweb="slider"] div[class*="rail"] {
+        background: var(--accent-line) !important;
+        background-color: var(--accent-line) !important;
+        background-image: none !important;
+    }
+
+    [data-testid="stApp"] [data-baseweb="input"] {
+        background-color: #ffffff !important;
+        color: var(--ink) !important;
+        border-color: var(--line) !important;
     }
 
 
@@ -327,10 +391,13 @@ st.html(
         letter-spacing: -.005em;
     }
 
+    /* Captions are functional help text, not decorative meta — one step
+       darker than --ink-3 so they clear WCAG AA at 12.5px. */
     [data-testid="stApp"] .stCaption,
     [data-testid="stApp"] [data-testid="stCaptionContainer"],
-    [data-testid="stApp"] [data-testid="stCaptionContainer"] p {
-        color: var(--ink-3) !important;
+    [data-testid="stApp"] [data-testid="stCaptionContainer"] p,
+    [data-testid="stApp"] [data-testid="stCaptionContainer"] span {
+        color: #6a7280 !important;
         font-size: 12.5px !important;
         line-height: 1.6;
     }
@@ -1452,6 +1519,66 @@ if generate_button:
     st.session_state[
         "generation_seed"
     ] = seed
+
+    # tell the scroll helper (below) to take the user to the faces
+    st.session_state["scroll_to_gallery"] = True
+
+
+# ============================================================
+# AUTO-SCROLL TO RESULTS
+# Streamlit has no built-in scroll API, so a zero-height component
+# nudges the parent container instead. The retry loop matters: this
+# script runs before the gallery DOM exists in the same rerun.
+# If parent access is ever blocked, the "View faces" link in the
+# confirmation bar is the manual fallback.
+# ============================================================
+
+if st.session_state.pop("scroll_to_gallery", False):
+
+    components.html(
+        """
+        <script>
+        (function () {
+            function go() {
+                try {
+                    var doc = window.parent.document;
+                    var target = doc.getElementById("gallery");
+                    if (!target) return false;
+
+                    var scroller =
+                        doc.querySelector('[data-testid="stAppViewContainer"]') ||
+                        doc.scrollingElement ||
+                        doc.documentElement;
+
+                    var offset = scroller.getBoundingClientRect
+                                     ? scroller.getBoundingClientRect().top
+                                     : 0;
+
+                    var top = target.getBoundingClientRect().top
+                              - offset
+                              - 76;
+
+                    if (scroller.scrollTo) {
+                        scroller.scrollTo({ top: top, behavior: "smooth" });
+                    } else {
+                        scroller.scrollTop = top;
+                    }
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            var tries = 0;
+            var iv = setInterval(function () {
+                tries++;
+                if (go() || tries > 24) clearInterval(iv);
+            }, 120);
+        })();
+        </script>
+        """,
+        height=1,
+    )
 
 
 # ============================================================
