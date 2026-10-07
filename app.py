@@ -1098,6 +1098,131 @@ st.html(
         .panel-sub { display: none; }
     }
 
+    /* Responsive vertical rhythm. Desktop keeps the airy spacing. */
+    .gap { height: 20px; }
+
+
+    /* ========================================================
+       MOBILE
+       A separate, denser layout. Desktop above is untouched —
+       everything in this block applies at phone widths only.
+       Priority on a phone: see the faces, reach Generate,
+       download. Chrome gets out of the way.
+    ======================================================== */
+
+    @media (max-width: 768px) {
+
+        .main .block-container {
+            padding: 0.7rem 0.85rem 3rem;
+        }
+
+        /* --- tighter top --- */
+        .appbar {
+            position: static;          /* reclaim the pinned 44px */
+            padding: 9px 12px;
+            margin-bottom: 14px;
+            border-radius: 12px;
+        }
+
+        .appbar-mark { width: 28px; height: 28px; border-radius: 9px; font-size: 13px; }
+        .appbar-title { font-size: 15px; }
+        .appbar-sub { font-size: 11.5px; }
+        .appbar-specs { display: none; }   /* decorative on a phone */
+
+        .page-head {
+            padding: 2px 6px 14px;
+            text-align: left;
+        }
+
+        .page-eyebrow {
+            font-size: 10.5px;
+            padding: 4px 10px;
+            margin-bottom: 10px;
+        }
+
+        .page-title {
+            font-size: 23px;
+            line-height: 1.16;
+            margin-bottom: 6px;
+        }
+
+        .page-sub { display: none; }      /* the eyebrow already frames it */
+
+        /* --- control panel: drop the chrome, keep the controls --- */
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            padding: 4px 14px 14px;
+            border-radius: 14px;
+        }
+
+        .panel-title { font-size: 15.5px; margin: 8px 0 4px; }
+        .panel-icon { width: 26px; height: 26px; border-radius: 8px; }
+        .panel-glyph { width: 14px; height: 14px; }
+        .panel-sub { display: none; }     /* the controls are self-evident */
+        .output-title { margin: 8px 0 10px; }
+
+        .gap { height: 8px; }
+
+        [data-testid="stApp"] [data-testid="stWidgetLabel"] p {
+            font-size: 12.5px !important;
+            margin-bottom: 2px;
+        }
+
+        .stButton > button { min-height: 46px !important; font-size: 15px !important; }
+
+        /* the note beside the mode select already covers this */
+        [data-testid="stApp"] .stCaption,
+        [data-testid="stApp"] [data-testid="stCaptionContainer"] {
+            display: none !important;
+        }
+
+        .mode-note { height: 38px; padding: 0 12px; font-size: 12.5px; }
+
+        /* --- results --- */
+        /* the confirmation under the button already reports the
+           outcome, so the wider status bar is redundant here */
+        .result-bar { display: none; }
+
+        .gen-done {
+            margin-top: 10px;
+            padding: 10px 12px;
+            font-size: 12.5px;
+            flex-wrap: nowrap;
+        }
+
+        .gen-done-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .gen-done-seed { display: none; }   /* keep it on one line */
+        .gen-done-link { padding: 4px 9px; font-size: 12px; }
+
+        .empty-card { min-height: 0; padding: 44px 20px; }
+        .empty-icon { width: 48px; height: 48px; font-size: 21px; margin-bottom: 13px; }
+        .empty-title { font-size: 17px; }
+        .empty-text { font-size: 13.5px; }
+
+        /* --- gallery: 2-up, cells sized to the 128px source --- */
+        [data-testid="stApp"] div[data-testid="stImage"] img { max-width: 152px; }
+        [data-testid="stApp"] div[data-testid="stImage"] { padding: 4px; border-radius: 12px; }
+
+        [data-testid="stApp"] .stDownloadButton > button {
+            min-height: 34px !important;
+            font-size: 12.5px !important;
+        }
+
+        .footer { margin-top: 36px; padding-top: 20px; font-size: 12px; }
+    }
+
+    /* very small phones */
+    @media (max-width: 360px) {
+        .page-title { font-size: 21px; }
+        .appbar-sub { display: none; }
+    }
+
+
     @media (prefers-reduced-motion: reduce) {
         * {
             animation: none !important;
@@ -1502,7 +1627,7 @@ with control_col:
         )
 
 
-        st.write("")
+        st.html('<div class="gap"></div>')
 
 
         generation_mode = st.selectbox(
@@ -1515,7 +1640,7 @@ with control_col:
         )
 
 
-        st.write("")
+        st.html('<div class="gap"></div>')
 
 
         if generation_mode == "Fixed seed":
@@ -1544,7 +1669,7 @@ with control_col:
             )
 
 
-        st.write("")
+        st.html('<div class="gap"></div>')
 
 
         generate_button = st.button(
@@ -1588,10 +1713,14 @@ with control_col:
 
                     <span class="gen-done-dot"></span>
 
-                    <span>
+                    <span class="gen-done-text">
                         <b>{len(done_images)} faces ready</b>
-                        &nbsp;·&nbsp; {done_time:.2f}s
-                        &nbsp;·&nbsp; {done_seed_text}
+                        <span class="gen-done-time">
+                            &nbsp;·&nbsp; {done_time:.2f}s
+                        </span>
+                        <span class="gen-done-seed">
+                            &nbsp;·&nbsp; {done_seed_text}
+                        </span>
                     </span>
 
                     <a class="gen-done-link" href="#gallery">
@@ -1827,7 +1956,7 @@ with output_col:
         # DOWNLOAD ALL
         # ====================================================
 
-        st.write("")
+        st.html('<div class="gap"></div>')
 
 
         zip_bytes = create_zip(
